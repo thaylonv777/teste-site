@@ -129,7 +129,7 @@ function scrubSequence(){
   const prog=document.getElementById('showProg');
   if(!canvas||!sec) return;
   const ctx=canvas.getContext('2d');
-  const COUNT=76;
+  const COUNT=91;
   const pad=n=>String(n).padStart(3,'0');
   const frames=[]; let loaded=0; let current=-1;
   for(let i=1;i<=COUNT;i++){const img=new Image();img.src=`assets/seq/f_${pad(i)}.jpg`;img.onload=()=>{loaded++;if(i===1)drawCover(img);};frames.push(img);}
