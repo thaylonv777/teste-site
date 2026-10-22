@@ -1,0 +1,13 @@
+VARGAS LOBO — site case (fictício)
+
+Trocar as fotos: substitua os arquivos mantendo os nomes.
+  persona-1.jpg  1100x1375  retrato do sócio (vertical)
+  persona-2.jpg  1000x1250  ambiente (vertical)
+  office-1.jpg   1200x900   mesa / documentos
+  office-2.jpg   1200x900   segundo plano
+  og.jpg         1200x630   imagem de compartilhamento
+
+Vídeos de fundo (hero e seção Método):
+  hero.webm + hero.mp4    luz do título vazado
+  scrub.webm + scrub.mp4  vídeo controlado pelo scroll
+Mantenha sempre os dois formatos (webm e mp4).

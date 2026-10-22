@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vargas Lobo — Advocacia Empresarial</title>
+<meta name="description" content="Escritório de advocacia empresarial. Societário, contratos, contencioso estratégico e reestruturação para empresas que não podem errar a decisão.">
+<meta name="theme-color" content="#071018">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vargas Lobo — Advocacia Empresarial">
+<meta property="og:description" content="Societário, contratos, contencioso estratégico e reestruturação.">
+<meta property="og:image" content="/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#071018; --ink-2:#0D1C27; --bone:#EFE9DF; --bone-dim:rgba(239,233,223,.58);
+  --ox:#A8303C; --ox-l:#C9545E; --rule:rgba(239,233,223,.14);
+  --pad:clamp(20px,5vw,80px);
+  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --sans:'Archivo',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--bone);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100%}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--ox);color:var(--bone)}
+:focus-visible{outline:2px solid var(--ox-l);outline-offset:3px}
+
+.d1{font-family:var(--serif);font-size:clamp(3rem,10.5vw,10rem);line-height:.92;letter-spacing:-.02em}
+.d2{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,5.4vw,4.6rem);line-height:1.02;letter-spacing:-.015em}
+.d3{font-family:var(--serif);font-weight:400;font-size:clamp(1.7rem,3vw,2.7rem);line-height:1.1}
+.it{font-style:italic}
+.lede{font-size:clamp(1.02rem,1.35vw,1.26rem);line-height:1.6;color:var(--bone-dim);max-width:62ch}
+.rule{height:1px;background:var(--rule);border:0}
+
+/* preloader */
+#pre{position:fixed;inset:0;z-index:120;background:var(--ink);display:flex;align-items:flex-end;justify-content:space-between;padding:var(--pad);transition:transform 1.05s cubic-bezier(.76,0,.24,1)}
+#pre.go{transform:translateY(-101%)}
+#pre .pn{font-family:var(--serif);font-size:clamp(1.6rem,4vw,3rem);line-height:1}
+#pre .pc{font-family:var(--serif);font-size:clamp(3rem,12vw,9rem);line-height:.8;font-variant-numeric:tabular-nums}
+#pre .pbar{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--pad) + 7.5rem);height:1px;background:var(--rule)}
+#pre .pbar i{display:block;height:100%;width:0;background:var(--bone)}
+
+/* progresso + cursor */
+#prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--ox);z-index:100;box-shadow:0 0 18px rgba(168,48,60,.7)}
+#cur{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:var(--bone);z-index:110;pointer-events:none;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .3s,height .3s,opacity .3s;opacity:0}
+#cur.big{width:70px;height:70px}
+@media (hover:none),(max-width:860px){#cur{display:none}}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;align-items:center;justify-content:space-between;padding:22px var(--pad);transition:background .4s,padding .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.on{background:rgba(7,16,24,.72);backdrop-filter:blur(14px);border-bottom-color:var(--rule);padding:14px var(--pad)}
+nav .wm{font-family:var(--serif);font-size:1.22rem}
+nav menu{display:none;gap:34px;list-style:none}
+nav menu a{font-size:.86rem;color:var(--bone-dim);transition:color .25s;position:relative}
+nav menu a::after{content:'';position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--ox-l);transition:width .35s cubic-bezier(.19,1,.22,1)}
+nav menu a:hover{color:var(--bone)} nav menu a:hover::after{width:100%}
+@media(min-width:1000px){nav menu{display:flex}}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border-radius:999px;font-size:.86rem;font-weight:500;background:var(--bone);color:var(--ink);transition:transform .35s cubic-bezier(.2,.8,.2,1),color .35s}
+.btn span{position:relative;z-index:1}
+.btn::before{content:'';position:absolute;inset:0;background:var(--ox);transform:translateY(101%);transition:transform .45s cubic-bezier(.76,0,.24,1)}
+.btn:hover{transform:translateY(-2px);color:var(--bone)}
+.btn:hover::before{transform:translateY(0)}
+.btn.ghost{background:transparent;color:var(--bone);box-shadow:inset 0 0 0 1px var(--rule)}
+
+/* hero */
+.hero{position:relative;height:100svh;min-height:600px;overflow:hidden}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+.hero .knock{position:absolute;inset:0;background:var(--ink);mix-blend-mode:multiply;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 var(--pad)}
+.hero h1{color:#fff;font-family:var(--serif);font-weight:400;line-height:.84;letter-spacing:-.03em;font-size:clamp(3.4rem,15.5vw,16rem);text-align:center}
+.hero h1 .l{display:block;overflow:hidden}
+.hero h1 .c{display:inline-block;transform:translateY(102%);transition:transform 1.1s cubic-bezier(.19,1,.22,1)}
+body.ready .hero h1 .c{transform:translateY(0)}
+.hero .veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(7,16,24,.55),rgba(7,16,24,0) 32%,rgba(7,16,24,.55) 78%,rgba(7,16,24,.96))}
+.hero .base{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(26px,5vh,54px);display:grid;gap:22px;grid-template-columns:1fr;align-items:end}
+@media(min-width:900px){.hero .base{grid-template-columns:minmax(0,44ch) 1fr auto}}
+.hero .base .meta{font-size:.8rem;color:var(--bone-dim);line-height:1.8}
+@media(min-width:900px){.hero .base .meta{justify-self:center;text-align:center}}
+.hero .base>*{opacity:0;transform:translateY(18px);transition:opacity .9s ease .75s,transform .9s cubic-bezier(.19,1,.22,1) .75s}
+body.ready .hero .base>*{opacity:1;transform:none}
+.scrollhint{position:absolute;left:50%;bottom:0;width:1px;height:80px;background:linear-gradient(var(--rule),transparent);transform:translateX(-50%)}
+.scrollhint::after{content:'';position:absolute;top:0;left:0;width:1px;height:26px;background:var(--bone);animation:drip 2.6s cubic-bezier(.7,0,.3,1) infinite}
+@keyframes drip{0%{transform:translateY(-26px);opacity:0}25%{opacity:1}100%{transform:translateY(80px);opacity:0}}
+
+section{position:relative;padding:clamp(88px,13vh,170px) var(--pad)}
+.wrap{max-width:1280px;margin:0 auto}
+.two{display:grid;gap:clamp(34px,5vw,80px);grid-template-columns:1fr}
+@media(min-width:960px){.two{grid-template-columns:1.05fr .95fr}}
+
+/* reveals */
+.ln{display:block;overflow:hidden}
+.ln>i{display:block;font-style:inherit;transform:translateY(105%);transition:transform 1.05s cubic-bezier(.19,1,.22,1)}
+.rv.in .ln>i{transform:translateY(0)}
+.rv .ln:nth-child(2)>i{transition-delay:.09s}
+.rv .ln:nth-child(3)>i{transition-delay:.18s}
+.wipe{clip-path:inset(0 100% 0 0);transition:clip-path 1.25s cubic-bezier(.76,0,.24,1)}
+.wipe.in{clip-path:inset(0 0 0 0)}
+.fade{opacity:0;transform:translateY(14px);transition:opacity .9s ease,transform .9s cubic-bezier(.19,1,.22,1)}
+.fade.in{opacity:1;transform:none}
+.w{color:rgba(239,233,223,.16);transition:color .45s ease}
+.w.lit{color:var(--bone)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);margin-top:clamp(44px,7vh,86px)}
+@media(min-width:860px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--ink);padding:30px 24px 26px;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;left:0;top:0;height:2px;width:0;background:var(--ox);transition:width 1.4s cubic-bezier(.19,1,.22,1)}
+.stat.in::after{width:100%}
+.stat b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,4.4vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:10px;font-size:.8rem;color:var(--bone-dim);line-height:1.5}
+
+/* método */
+.method{padding:0}
+.method .stage{position:relative;height:440vh}
+.method .pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+.method video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6}
+.method .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,16,24,.96) 0%,rgba(7,16,24,.78) 45%,rgba(7,16,24,.32) 100%)}
+.method .inner{position:relative;width:100%;max-width:1280px;margin:0 auto;padding:0 var(--pad);display:grid;gap:40px;grid-template-columns:1fr}
+@media(min-width:960px){.method .inner{grid-template-columns:minmax(0,52ch) 1fr}}
+.steps{position:relative;min-height:330px}
+.step{position:absolute;inset:0;opacity:0;transform:translateY(22px);transition:opacity .55s,transform .7s cubic-bezier(.19,1,.22,1);pointer-events:none}
+.step.on{opacity:1;transform:none;pointer-events:auto}
+.step .idx{display:flex;align-items:center;gap:14px;font-size:.78rem;color:var(--ox-l);margin-bottom:18px}
+.step .idx s{flex:1;height:1px;background:var(--rule);text-decoration:none}
+.step p{margin-top:18px}
+.track{display:none}
+@media(min-width:960px){.track{display:flex;flex-direction:column;justify-self:end;align-self:center;width:270px}}
+.track button{all:unset;cursor:pointer;display:flex;gap:14px;align-items:baseline;padding:15px 0;border-top:1px solid var(--rule);color:var(--bone-dim);font-size:.9rem;transition:color .3s,padding-left .4s;position:relative}
+.track button:last-child{border-bottom:1px solid var(--rule)}
+.track button.on{color:var(--bone);padding-left:10px}
+.track button i{font-style:normal;font-size:.72rem;color:var(--ox-l);width:18px}
+.track button::before{content:'';position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--ox);transition:width .5s cubic-bezier(.19,1,.22,1)}
+.track button.on::before{width:100%}
+
+/* áreas */
+.areas .list{margin-top:clamp(40px,6vh,70px)}
+.area{position:sticky;top:110px;background:var(--ink-2);border:1px solid var(--rule);border-radius:3px;padding:clamp(26px,4vw,52px);margin-bottom:22px;display:grid;gap:22px;grid-template-columns:1fr;will-change:transform;transform-origin:top center}
+@media(min-width:860px){.area{grid-template-columns:auto 1fr auto;align-items:start;gap:46px}}
+.area .no{font-family:var(--serif);font-size:1.5rem;color:var(--ox-l);line-height:1}
+.area h3{font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,2.8vw,2.3rem);line-height:1.1;margin-bottom:14px}
+.area p{color:var(--bone-dim);line-height:1.65;max-width:56ch;font-size:.97rem}
+.area ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.area li{font-size:.76rem;padding:7px 13px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--rule);color:var(--bone-dim);transition:box-shadow .3s,color .3s}
+.area li:hover{box-shadow:inset 0 0 0 1px var(--ox);color:var(--bone)}
+.area .tag{font-size:.75rem;color:var(--bone-dim);white-space:nowrap}
+
+/* casos */
+.cases{padding-bottom:0}
+.rail-stage{height:320vh;position:relative}
+.rail-pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.rail-head{width:100%;align-self:stretch;text-align:left;margin-bottom:clamp(20px,3.2vh,38px)}
+.rail-head h2{font-size:clamp(1.9rem,3.4vw,3rem)}
+.rail{display:flex;gap:clamp(16px,2vw,30px);padding:0 var(--pad);will-change:transform}
+.case{flex:0 0 min(84vw,400px);height:min(66vh,560px);background:var(--ink-2);border:1px solid var(--rule);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;will-change:transform;transition:border-color .4s}
+.case:hover{border-color:rgba(168,48,60,.55)}
+.case .img{flex:0 0 44%;background:#0A1620;overflow:hidden}
+.case .img img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);transition:filter .7s,transform 1.1s cubic-bezier(.19,1,.22,1)}
+.case:hover .img img{filter:none;transform:scale(1.05)}
+.case .body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+.case .sector{font-size:.74rem;color:var(--ox-l)}
+.case h4{font-family:var(--serif);font-weight:400;font-size:1.32rem;line-height:1.15}
+.case p{font-size:.87rem;color:var(--bone-dim);line-height:1.55}
+.case .out{margin-top:auto;padding-top:16px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--bone-dim)}
+.case .out b{font-family:var(--serif);font-weight:400;font-size:1.35rem;display:block;margin-bottom:2px;color:var(--bone)}
+
+/* sócio */
+.partner{background:var(--ink-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.portrait{position:relative;overflow:hidden;border-radius:3px;aspect-ratio:4/5;background:#0A1620}
+.portrait img{width:100%;height:122%;object-fit:cover;will-change:transform}
+.portrait .seal{position:absolute;left:0;bottom:0;background:var(--ox);color:var(--bone);padding:14px 20px;font-size:.78rem;line-height:1.45}
+.quote{font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,2.2rem);line-height:1.28;margin:30px 0}
+.sig{display:flex;align-items:center;gap:16px;margin-top:34px}
+.sig b{font-weight:500;font-size:.92rem}
+.sig span{font-size:.8rem;color:var(--bone-dim)}
+.sig .dot{width:34px;height:1px;background:var(--ox)}
+
+/* marquee */
+.marq{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);overflow:hidden;padding:26px 0;background:var(--ink)}
+.marq .row{display:flex;gap:56px;width:max-content;will-change:transform}
+.marq span{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.9rem);color:var(--bone-dim);white-space:nowrap}
+.marq span em{color:var(--ox-l);font-style:normal}
+
+/* contato */
+.cgrid{display:grid;gap:40px;grid-template-columns:1fr;margin-top:clamp(40px,6vh,72px)}
+@media(min-width:860px){.cgrid{grid-template-columns:1fr 1fr 1fr}}
+.cgrid h5{font-size:.78rem;color:var(--ox-l);margin-bottom:12px;font-weight:500}
+.cgrid p,.cgrid a{font-size:.96rem;color:var(--bone-dim);line-height:1.7}
+.cgrid a:hover{color:var(--bone)}
+footer{padding:28px var(--pad);border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;font-size:.76rem;color:var(--bone-dim)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .ln>i{transform:none}.wipe{clip-path:none}.fade{opacity:1;transform:none}
+  .hero h1 .c{transform:none}.hero .base>*{opacity:1;transform:none}.w{color:var(--bone)}
+}
+</style>
+</head>
+<body>
+
+<div id="pre">
+  <div class="pn">Vargas&nbsp;Lobo</div>
+  <div class="pbar"><i></i></div>
+  <div class="pc" id="pct">0</div>
+</div>
+<div id="prog"></div>
+<div id="cur"></div>
+
+<nav id="nav">
+  <a href="#top" class="wm">Vargas&nbsp;Lobo</a>
+  <menu>
+    <li><a href="#atuacao">Atuação</a></li>
+    <li><a href="#metodo">Método</a></li>
+    <li><a href="#casos">Casos</a></li>
+    <li><a href="#socio">Sócio</a></li>
+  </menu>
+  <a href="#contato" class="btn"><span>Agendar conversa</span></a>
+</nav>
+
+<header class="hero" id="top">
+  <video id="heroV" autoplay muted loop playsinline preload="auto">
+    <source src="hero.webm" type="video/webm"><source src="hero.mp4" type="video/mp4">
+  </video>
+  <div class="veil"></div>
+  <div class="knock"><h1 data-split><span class="l">VARGAS</span><span class="l">LOBO</span></h1></div>
+  <div class="base">
+    <p class="lede">Advocacia empresarial para decisões que não comportam tentativa e erro.</p>
+    <p class="meta">São Paulo · Porto Alegre<br>Desde 2009</p>
+    <a href="#contato" class="btn ghost"><span>Agendar conversa</span></a>
+  </div>
+  <div class="scrollhint"></div>
+</header>
+
+<section class="manifesto">
+  <div class="wrap two">
+    <h2 class="d2 rv"><span class="ln"><i>Empresa madura não</i></span><span class="ln"><i>contrata advogado.</i></span><span class="ln"><i class="it">Contrata critério.</i></span></h2>
+    <div>
+      <p class="lede" data-words>Atuamos onde o erro é caro: entrada de sócio, cláusula mal escrita, contrato que só mostra o problema no terceiro ano. Antes de responder o que é possível, respondemos o que é prudente.</p>
+      <p class="lede fade" style="margin-top:22px">Trinta e um advogados. Três áreas. Nenhuma delas por volume.</p>
+    </div>
+  </div>
+  <div class="wrap stats">
+    <div class="stat"><b data-n="640" data-suf="+">0</b><span>Operações societárias conduzidas</span></div>
+    <div class="stat"><b data-n="4" data-pre="R$ " data-suf=" bi">0</b><span>Em transações assessoradas</span></div>
+    <div class="stat"><b data-n="16" data-suf=" anos">0</b><span>De banca constituída</span></div>
+    <div class="stat"><b data-n="94" data-suf="%">0</b><span>Dos clientes no segundo contrato</span></div>
+  </div>
+</section>
+
+<section class="method" id="metodo">
+  <div class="stage">
+    <div class="pin">
+      <video id="scrubV" muted playsinline preload="auto">
+        <source src="scrub.webm" type="video/webm"><source src="scrub.mp4" type="video/mp4">
+      </video>
+      <div class="shade"></div>
+      <div class="inner">
+        <div class="steps" id="steps">
+          <article class="step on">
+            <div class="idx">Leitura<s></s></div>
+            <h3 class="d3">Entender o negócio antes da tese.</h3>
+            <p class="lede">Lemos contrato, balanço e histórico de conflito antes de opinar. A maior parte do risco jurídico de uma empresa nasce de uma decisão comercial tomada sem alguém lendo a letra miúda.</p>
+          </article>
+          <article class="step">
+            <div class="idx">Desenho<s></s></div>
+            <h3 class="d3">Estruturar o caminho com o custo na mesa.</h3>
+            <p class="lede">Cada rota vem com prazo, exposição e custo estimado. Você escolhe sabendo o que está comprando — inclusive quando a recomendação é não litigar.</p>
+          </article>
+          <article class="step">
+            <div class="idx">Execução<s></s></div>
+            <h3 class="d3">Sócio no comando, não só no contrato.</h3>
+            <p class="lede">Quem apresenta a proposta conduz o caso. Sem repasse para equipe júnior depois da assinatura, sem interlocutor novo a cada etapa.</p>
+          </article>
+          <article class="step">
+            <div class="idx">Continuidade<s></s></div>
+            <h3 class="d3">O que foi decidido vira documento vivo.</h3>
+            <p class="lede">Acordo fechado vira playbook interno do cliente: cláusulas-padrão, alçadas e o que fazer quando o cenário repetir. O conhecimento fica na empresa.</p>
+          </article>
+        </div>
+        <div class="track" id="track">
+          <button data-i="0" class="on"><i>01</i>Leitura</button>
+          <button data-i="1"><i>02</i>Desenho</button>
+          <button data-i="2"><i>03</i>Execução</button>
+          <button data-i="3"><i>04</i>Continuidade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="areas" id="atuacao">
+  <div class="wrap">
+    <h2 class="d2 rv"><span class="ln"><i>Três frentes.</i></span><span class="ln"><i class="it">Nenhuma por volume.</i></span></h2>
+    <div class="list" id="areaList">
+      <article class="area">
+        <div class="no">I</div>
+        <div>
+          <h3>Societário e M&amp;A</h3>
+          <p>Entrada e saída de sócio, acordo de quotistas, reorganização de holding, compra e venda de participação. A fase em que o combinado precisa sobreviver ao desentendimento.</p>
+          <ul><li>Acordo de sócios</li><li>Due diligence</li><li>Holding familiar</li><li>Earn-out</li></ul>
+        </div>
+        <div class="tag">217 operações</div>
+      </article>
+      <article class="area">
+        <div class="no">II</div>
+        <div>
+          <h3>Contratos e compliance</h3>
+          <p>Contratos de fornecimento, distribuição e tecnologia escritos para serem executados, não só assinados. Revisão de base contratual e política interna de alçada.</p>
+          <ul><li>Contratos-quadro</li><li>LGPD</li><li>Política de alçadas</li><li>Cláusula penal</li></ul>
+        </div>
+        <div class="tag">Base de 1.400 contratos</div>
+      </article>
+      <article class="area">
+        <div class="no">III</div>
+        <div>
+          <h3>Contencioso estratégico</h3>
+          <p>Disputa societária, quebra de contrato relevante e arbitragem. Entramos quando o caso define o próximo ciclo da empresa — e saímos por acordo quando o acordo é melhor.</p>
+          <ul><li>Arbitragem</li><li>Dissolução parcial</li><li>Medidas urgentes</li><li>Recuperação</li></ul>
+        </div>
+        <div class="tag">38 arbitragens</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cases" id="casos">
+  <div class="rail-stage">
+    <div class="rail-pin">
+      <div class="wrap rail-head" style="padding:0 var(--pad)">
+        <h2 class="d2 rv"><span class="ln"><i>Casos recentes</i></span></h2>
+      </div>
+      <div class="rail" id="rail">
+        <article class="case">
+          <div class="img"><img src="office-1.jpg" alt="" loading="lazy"></div>
+          <div class="body">
+            <div class="sector">Indústria · Caxias do Sul</div>
+            <h4>Saída de sócio sem parar a fábrica</h4>
+            <p>Dissolução parcial em empresa familiar de terceira geração, com apuração de haveres contestada e risco de bloqueio operacional.</p>
+            <div class="out"><b>11 meses</b>Acordo homologado, zero dia de operação parada</div>
+          </div>
+        </article>
+        <article class="case">
+          <div class="img"><img src="office-2.jpg" alt="" loading="lazy"></div>
+          <div class="body">
+            <div class="sector">Tecnologia · São Paulo</div>
+            <h4>Venda de participação com earn-out</h4>
+            <p>Estruturação da venda de 40% para fundo, com metas atreladas a receita recorrente e governança de minoritário.</p>
+            <div class="out"><b>R$ 190 mi</b>Transação concluída em dois fechamentos</div>
+          </div>
+        </article>
+        <article class="case">
+          <div class="img"><img src="persona-2.jpg" alt="" loading="lazy"></div>
+          <div class="body">
+            <div class="sector">Varejo · Rio Grande do Sul</div>
+            <h4>Rede de fornecimento reescrita</h4>
+            <p>Revisão de 340 contratos após mudança de modelo logístico, com cláusula de reajuste e matriz de responsabilidade.</p>
+            <div class="out"><b>−68%</b>De disputa com fornecedor em dois anos</div>
+          </div>
+        </article>
+        <article class="case">
+          <div class="img"><img src="office-1.jpg" alt="" loading="lazy"></div>
+          <div class="body">
+            <div class="sector">Agronegócio · Mato Grosso</div>
+            <h4>Arbitragem de quebra de contrato</h4>
+            <p>Disputa sobre entrega de safra com cláusula de preço indexado e discussão de força maior após evento climático.</p>
+            <div class="out"><b>Acordo</b>Encerrado antes da sentença arbitral</div>
+          </div>
+        </article>
+        <article class="case">
+          <div class="img"><img src="office-2.jpg" alt="" loading="lazy"></div>
+          <div class="body">
+            <div class="sector">Saúde · Paraná</div>
+            <h4>Holding e sucessão em grupo hospitalar</h4>
+            <p>Reorganização societária de quatro unidades com planejamento sucessório e acordo entre dois núcleos familiares.</p>
+            <div class="out"><b>4 unidades</b>Sob uma estrutura única de governança</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="partner" id="socio">
+  <div class="wrap two" style="align-items:center">
+    <div class="portrait wipe" id="port">
+      <img src="persona-1.jpg" alt="Retrato do sócio fundador" id="portImg">
+      <div class="seal">Sócio fundador<br>OAB/SP 000.000</div>
+    </div>
+    <div>
+      <h2 class="d2 rv"><span class="ln"><i>Quem conduz</i></span><span class="ln"><i class="it">o seu caso.</i></span></h2>
+      <p class="quote fade">“Empresário não quer ganhar discussão. Quer voltar a trabalhar sem aquilo pendurado.”</p>
+      <p class="lede fade">Dezoito anos em societário e contencioso empresarial. Antes da banca, sete anos na área jurídica de um grupo industrial — o que explica a obsessão por decisão que cabe no orçamento e no calendário de quem produz.</p>
+      <div class="sig fade"><span class="dot"></span><div><b>Rafael Vargas</b><br><span>Sócio fundador · Societário e M&amp;A</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="marq">
+  <div class="row" id="marq">
+    <span>Indústria</span><span><em>·</em></span><span>Agronegócio</span><span><em>·</em></span><span>Saúde</span><span><em>·</em></span><span>Tecnologia</span><span><em>·</em></span><span>Varejo</span><span><em>·</em></span><span>Energia</span><span><em>·</em></span>
+    <span>Indústria</span><span><em>·</em></span><span>Agronegócio</span><span><em>·</em></span><span>Saúde</span><span><em>·</em></span><span>Tecnologia</span><span><em>·</em></span><span>Varejo</span><span><em>·</em></span><span>Energia</span><span><em>·</em></span>
+  </div>
+</div>
+
+<section id="contato">
+  <div class="wrap">
+    <h2 class="d2 rv"><span class="ln"><i>Traga o caso.</i></span><span class="ln"><i class="it">A primeira leitura é nossa.</i></span></h2>
+    <p class="lede fade" style="margin-top:24px">Uma conversa de 40 minutos com um sócio para entender o problema e dizer se vale a pena contratar alguém — inclusive se esse alguém não formos nós.</p>
+    <div class="fade" style="margin-top:34px"><a href="#contato" class="btn"><span>Agendar conversa</span></a></div>
+    <div class="cgrid">
+      <div class="fade"><h5>São Paulo</h5><p>Rua Jerônimo da Veiga, 164<br>Itaim Bibi · 04536-001</p></div>
+      <div class="fade"><h5>Porto Alegre</h5><p>Av. Carlos Gomes, 1340<br>Boa Vista · 90480-001</p></div>
+      <div class="fade"><h5>Contato</h5><p><a href="#contato">contato@vargaslobo.com.br</a><br><a href="#contato">+55 11 3045-0000</a></p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Vargas Lobo Sociedade de Advogados</span>
+  <span>Projeto fictício para demonstração</span>
+</footer>
+
+<script>
+(function(){
+var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- split do título do hero em letras ---- */
+document.querySelectorAll('[data-split] .l').forEach(function(line,li){
+  var txt=line.textContent, out='';
+  for(var i=0;i<txt.length;i++){
+    out+='<span class="c" style="transition-delay:'+(.35+li*.1+i*.045).toFixed(3)+'s">'+txt[i]+'</span>';
+  }
+  line.innerHTML=out;
+});
+/* ---- split de palavras (destaque por scroll) ---- */
+document.querySelectorAll('[data-words]').forEach(function(p){
+  p.innerHTML=p.textContent.trim().split(/\s+/).map(function(w){return '<span class="w">'+w+'</span>'}).join(' ');
+});
+
+/* ---- preloader ---- */
+var pre=document.getElementById('pre'), pct=document.getElementById('pct'), bar=pre.querySelector('.pbar i'), n=0, t0=performance.now();
+(function tick(){
+  var e=Math.min(1,(performance.now()-t0)/1400), v=Math.round(e*100);
+  if(v!==n){n=v;pct.textContent=n;bar.style.width=n+'%';}
+  if(e<1) requestAnimationFrame(tick);
+  else setTimeout(function(){pre.classList.add('go');document.body.classList.add('ready');},220);
+})();
+
+/* ---- cursor ---- */
+var cur=document.getElementById('cur');
+if(cur && matchMedia('(hover:hover)').matches && !RM){
+  var cx=0,cy=0,tx=0,ty=0;
+  addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;cur.style.opacity=1;});
+  (function loop(){cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;cur.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button,.case').forEach(function(el){
+    el.addEventListener('mouseenter',function(){cur.classList.add('big')});
+    el.addEventListener('mouseleave',function(){cur.classList.remove('big')});
+  });
+}
+
+/* ---- tilt nos cards de caso ---- */
+if(!RM) document.querySelectorAll('.case').forEach(function(c){
+  c.addEventListener('mousemove',function(e){
+    var r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+    c.style.transform='perspective(900px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg) translateY(-6px)';
+  });
+  c.addEventListener('mouseleave',function(){c.style.transform=''});
+});
+
+/* ---- refs ---- */
+var nav=document.getElementById('nav'), prog=document.getElementById('prog');
+var revealEls=[].slice.call(document.querySelectorAll('.rv,.wipe,.fade,.stat'));
+var counters=[].slice.call(document.querySelectorAll('.stat b')).map(function(el){
+  return {el:el,end:parseFloat(el.dataset.n),pre:el.dataset.pre||'',suf:el.dataset.suf||'',t:0,run:false};
+});
+var words=[].slice.call(document.querySelectorAll('[data-words]'));
+var stage=document.querySelector('.method .stage'), vid=document.getElementById('scrubV');
+var steps=[].slice.call(document.querySelectorAll('.step')), track=[].slice.call(document.querySelectorAll('.track button'));
+var railStage=document.querySelector('.rail-stage'), rail=document.getElementById('rail');
+var areas=[].slice.call(document.querySelectorAll('.area'));
+var port=document.getElementById('portImg'), heroV=document.getElementById('heroV'), marq=document.getElementById('marq');
+var dur=0, want=0, cv=0, curStep=-1, marqX=0, lastY=scrollY, vel=0;
+
+if(vid){ vid.addEventListener('loadedmetadata',function(){dur=vid.duration||0}); vid.load(); }
+track.forEach(function(b){b.addEventListener('click',function(){
+  var i=+b.dataset.i, total=stage.offsetHeight-innerHeight;
+  scrollTo({top:stage.offsetTop+total*((i+.5)/steps.length),behavior:'smooth'});
+})});
+function setStep(i){
+  if(i===curStep) return; curStep=i;
+  steps.forEach(function(s,k){s.classList.toggle('on',k===i)});
+  track.forEach(function(b,k){b.classList.toggle('on',k===i)});
+}
+
+function frame(){
+  var H=innerHeight, y=scrollY;
+  vel=vel*0.9+(y-lastY)*0.1; lastY=y;
+
+  /* nav + progresso */
+  nav.classList.toggle('on',y>40);
+  var max=document.body.scrollHeight-H;
+  prog.style.width=(max>0?(y/max)*100:0)+'%';
+
+  /* reveals */
+  for(var i=revealEls.length-1;i>=0;i--){
+    var el=revealEls[i], r=el.getBoundingClientRect();
+    if(r.top<H*0.88 && r.bottom>0){ el.classList.add('in'); revealEls.splice(i,1); }
+  }
+
+  /* contadores */
+  counters.forEach(function(c){
+    var r=c.el.getBoundingClientRect();
+    if(!c.run && r.top<H*0.9 && r.bottom>0) c.run=true;
+    if(c.run && c.t<1){
+      c.t=Math.min(1,c.t+0.016); var k=1-Math.pow(1-c.t,3);
+      c.el.textContent=c.pre+Math.round(c.end*k)+c.suf;
+    }
+  });
+
+  /* destaque palavra a palavra */
+  words.forEach(function(p){
+    var r=p.getBoundingClientRect();
+    if(r.bottom<0||r.top>H) return;
+    var prog=(H*0.78-r.top)/(r.height+H*0.22);
+    var sp=p.children, lit=Math.round(Math.max(0,Math.min(1,prog))*sp.length*1.25);
+    for(var k=0;k<sp.length;k++) sp[k].classList.toggle('lit',k<lit);
+  });
+
+  /* método: vídeo controlado pelo scroll */
+  if(stage){
+    var sr=stage.getBoundingClientRect(), st=stage.offsetHeight-H;
+    var p=Math.min(1,Math.max(0,-sr.top/st));
+    if(sr.top<H && sr.bottom>0){
+      if(dur) want=p*(dur-0.06);
+      setStep(Math.min(steps.length-1,Math.floor(p*steps.length*0.999)));
+    }
+  }
+  if(dur){ cv+=(want-cv)*0.16; if(Math.abs(want-cv)>0.003){ try{vid.currentTime=cv}catch(e){} } }
+
+  /* trilho horizontal */
+  if(railStage&&rail){
+    var rr=railStage.getBoundingClientRect(), rt=railStage.offsetHeight-H;
+    var pp=Math.min(1,Math.max(0,-rr.top/rt));
+    var mx=Math.max(0,rail.scrollWidth-innerWidth+40);
+    rail.style.transform='translate3d('+(-pp*mx)+'px,0,0)';
+  }
+
+  /* áreas empilhadas: encolhe quem fica atrás */
+  areas.forEach(function(a,k){
+    var ar=a.getBoundingClientRect(), last=k===areas.length-1;
+    if(last){a.style.transform='';return}
+    var over=Math.max(0,Math.min(1,(110-ar.top)/300));
+    a.style.transform='scale('+(1-over*0.055)+')';
+    a.style.opacity=1-over*0.35;
+  });
+
+  /* parallax retrato + hero */
+  if(port){
+    var pr=port.parentElement.getBoundingClientRect();
+    if(pr.bottom>0&&pr.top<H) port.style.transform='translateY('+(-((H-pr.top)/(H+pr.height))*18)+'%)';
+  }
+  if(heroV&&y<H) heroV.style.transform='scale('+(1+y/H*0.09)+')';
+
+  /* marquee com inércia do scroll */
+  if(marq){
+    marqX-=0.45+Math.min(3,Math.abs(vel)*0.06);
+    var half=marq.scrollWidth/2;
+    if(-marqX>=half) marqX+=half;
+    marq.style.transform='translate3d('+marqX+'px,0,0)';
+  }
+
+  requestAnimationFrame(frame);
+}
+if(!RM) requestAnimationFrame(frame);
+else { revealEls.forEach(function(e){e.classList.add('in')}); setStep(0); }
+})();
+</script>
+</body>
+</html>
