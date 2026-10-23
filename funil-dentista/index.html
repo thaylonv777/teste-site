@@ -288,6 +288,7 @@ function submitLead(){
   var btns=document.querySelectorAll(".cta");
   btns.forEach(function(b){b.disabled=true;b.textContent="Enviando...";});
   lead.answers=answers;
+  lead.session_id=sessionId();
   fetch(WEBHOOK_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
