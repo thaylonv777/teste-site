@@ -76,6 +76,8 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .proof-name{font-size:12.5px;font-weight:600;color:var(--fg);margin-top:2px}
 .proof-detail{font-size:12px;color:var(--muted);line-height:1.4}
 .proof-foot{font-size:10.5px;color:var(--gold);margin-top:2px;letter-spacing:.02em}
+.proof-shot{margin-top:10px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--line)}
+.proof-shot img{display:block;width:100%;height:auto}
 .field.compact{margin-bottom:9px}
 .field.compact label{font-size:11.5px}
 .field.compact input{padding:10px 12px;font-size:14px;border-radius:9px}
@@ -136,7 +138,7 @@ var steps=[
      {n:"03",title:"Plataforma de gestão",text:"Leads com follow-up automático, sem precisar lembrar de ninguém."},
      {n:"04",title:"Equipe treinada",text:"Metodologia própria pra extrair o máximo de cada oportunidade."}
    ],
-   proof:{tag:"Ganho",name:"M. M.",detail:"Fechamento: protocolo protese em porcelana, entrada + 12x de R$ 1.083",valueLabel:"Negociação conduzida direto pelo WhatsApp, via Manu.ia"},
+   proof:{tag:"Ganho",name:"M. M.",detail:"Fechamento: protocolo protese em porcelana, entrada + 12x de R$ 1.083",valueLabel:"Negociação conduzida direto pelo WhatsApp, via Manu.ia",shot:"assets/prova-social.png"},
    formTitle:"Pra onde enviamos sua análise gratuita?",
    fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
    cta:"Quero minha análise gratuita"},
@@ -191,7 +193,9 @@ function render(){
       s.cards.forEach(function(c){f+='<div class="card"><div class="n">'+esc(c.n)+'</div><h4>'+esc(c.title)+'</h4><p>'+esc(c.text)+'</p></div>';});
       f+='</div>';
       if(s.proof){
-        f+='<div class="proof-card"><span class="proof-tag">● '+esc(s.proof.tag)+'</span><div class="proof-name">'+esc(s.proof.name)+'</div><div class="proof-detail">'+esc(s.proof.detail)+'</div><div class="proof-foot">'+esc(s.proof.valueLabel)+'</div></div>';
+        f+='<div class="proof-card"><span class="proof-tag">● '+esc(s.proof.tag)+'</span><div class="proof-name">'+esc(s.proof.name)+'</div><div class="proof-detail">'+esc(s.proof.detail)+'</div><div class="proof-foot">'+esc(s.proof.valueLabel)+'</div>'+
+          (s.proof.shot?'<div class="proof-shot"><img src="'+esc(s.proof.shot)+'" alt="Negociação fechada"></div>':'')+
+          '</div>';
       }
       f+='<div class="closer-divider"></div>';
       f+='<div class="closer-form-title">'+esc(s.cta)+'</div>';
