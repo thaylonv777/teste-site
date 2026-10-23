@@ -65,6 +65,21 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .closer-stats .lbl{font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.02em;line-height:1.3}
 .closer-divider{height:1px;background:var(--line);margin:18px 0}
 .closer-form-title{font-size:13.5px;font-weight:600;color:var(--fg);margin:0 0 12px;text-align:center}
+.closer-section-title{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;text-align:center}
+.closer-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.closer-cards .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:14px 12px}
+.closer-cards .card .n{font-family:var(--disp);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;margin-bottom:6px}
+.closer-cards .card h4{font-size:13px;font-weight:600;margin:0 0 4px;color:var(--fg)}
+.closer-cards .card p{font-size:11.5px;color:var(--muted);line-height:1.4;margin:0}
+.proof-card{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:var(--rs);padding:12px 14px;display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.proof-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#4ade80;background:rgba(74,222,128,.12);border-radius:20px;padding:3px 9px;width:fit-content}
+.proof-name{font-size:12.5px;font-weight:600;color:var(--fg);margin-top:2px}
+.proof-detail{font-size:12px;color:var(--muted);line-height:1.4}
+.proof-foot{font-size:10.5px;color:var(--gold);margin-top:2px;letter-spacing:.02em}
+.field.compact{margin-bottom:9px}
+.field.compact label{font-size:11.5px}
+.field.compact input{padding:10px 12px;font-size:14px;border-radius:9px}
+.cta.compact{padding:13px;font-size:14.5px}
 
 /* etapa de vídeo depoimento */
 .depo-frame{position:relative;width:100%;max-width:260px;margin:0 auto 18px;aspect-ratio:9/16;border-radius:24px;padding:6px;
@@ -114,6 +129,14 @@ var steps=[
    sub:"Anúncios validados, atendimento automático e nenhuma oportunidade perdida.",
    stats:[{num:"24/7",lbl:"Atendimento, sem pausa"},{num:"7+",lbl:"Anos de método validado"},{num:"100%",lbl:"Follow-up automático"}],
    highlights:["Anúncios com estrutura validada em clínicas odontológicas","Agente de IA respondendo e qualificando seus leads","Nenhum lead esquecido, sem fila de espera"],
+   cardsTitle:"O que vamos implementar",
+   cards:[
+     {n:"01",title:"Anúncios validados",text:"Campanhas com estrutura testada há mais de 7 anos em clínicas odonto."},
+     {n:"02",title:"Agente de IA 24/7",text:"Atende e qualifica seus leads a qualquer hora do dia."},
+     {n:"03",title:"Plataforma de gestão",text:"Leads com follow-up automático, sem precisar lembrar de ninguém."},
+     {n:"04",title:"Equipe treinada",text:"Metodologia própria pra extrair o máximo de cada oportunidade."}
+   ],
+   proof:{tag:"Ganho",name:"M. M.",detail:"Fechamento: protocolo protese em porcelana, entrada + 12x de R$ 1.083",valueLabel:"Negociação conduzida direto pelo WhatsApp, via Manu.ia"},
    formTitle:"Pra onde enviamos sua análise gratuita?",
    fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
    cta:"Quero minha análise gratuita"},
@@ -159,9 +182,26 @@ function render(){
     }
     f+='<div class="closer-divider"></div>';
     if(s.formTitle) f+='<div class="closer-form-title">'+esc(s.formTitle)+'</div>';
-    s.fields.forEach(function(fd){f+='<div class="field"><label for="f_'+fd.k+'">'+esc(fd.label)+'</label><input id="f_'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';});
+    f+=fieldsHtml(s.fields,false);
     f+='<div class="err" id="errmsg"></div>';
+    if(s.cards&&s.cards.length){
+      f+='<div class="closer-divider"></div>';
+      if(s.cardsTitle) f+='<div class="closer-section-title">'+esc(s.cardsTitle)+'</div>';
+      f+='<div class="closer-cards">';
+      s.cards.forEach(function(c){f+='<div class="card"><div class="n">'+esc(c.n)+'</div><h4>'+esc(c.title)+'</h4><p>'+esc(c.text)+'</p></div>';});
+      f+='</div>';
+      if(s.proof){
+        f+='<div class="proof-card"><span class="proof-tag">● '+esc(s.proof.tag)+'</span><div class="proof-name">'+esc(s.proof.name)+'</div><div class="proof-detail">'+esc(s.proof.detail)+'</div><div class="proof-foot">'+esc(s.proof.valueLabel)+'</div></div>';
+      }
+      f+='<div class="closer-divider"></div>';
+      f+='<div class="closer-form-title">'+esc(s.cta)+'</div>';
+      f+=fieldsHtml(s.fields,true);
+      f+='<div class="err" id="errmsg2"></div>';
+      f+='<button type="button" class="cta compact" id="ctaCompact">'+esc(s.cta)+'</button>';
+    }
     scr.innerHTML=f;
+    bindFieldSync();
+    var ctaCompact=$("#ctaCompact"); if(ctaCompact) ctaCompact.onclick=submitLead;
     var btn=mkCta(s.cta,submitLead);
     ft.appendChild(btn); ft.appendChild(mkBack());
   }else if(s.type==="thanks"){
@@ -174,21 +214,39 @@ function mkBack(){var b=document.createElement("button");b.className="back";b.te
 function next(){if(idx<steps.length-1){idx++;render();}}
 function prev(){if(idx>0){idx--;render();}}
 
+function fieldsHtml(fields,compact){
+  var cls=compact?"field compact":"field", pre=compact?"fc_":"f_", h="";
+  fields.forEach(function(fd){
+    h+='<div class="'+cls+'"><label for="'+pre+fd.k+'">'+esc(fd.label)+'</label><input id="'+pre+fd.k+'" data-field="'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';
+  });
+  return h;
+}
+function bindFieldSync(){
+  document.querySelectorAll("#screen [data-field]").forEach(function(inp){
+    inp.addEventListener("input",function(){
+      var k=inp.dataset.field, v=inp.value;
+      document.querySelectorAll('#screen [data-field="'+k+'"]').forEach(function(other){ if(other!==inp) other.value=v; });
+    });
+  });
+}
+
 function submitLead(){
   var s=steps[idx], lead={}, ok=true;
   s.fields.forEach(function(fd){var v=$("#f_"+fd.k).value.trim();lead[fd.k]=v;if(!v)ok=false;});
-  var errEl=$("#errmsg");
-  if(!ok){errEl.textContent="Preencha todos os campos.";return;}
-  if(lead.whatsapp.replace(/\D/g,"").length<10){errEl.textContent="WhatsApp inválido.";return;}
-  errEl.textContent="";
-  var btn=document.querySelector(".cta"); btn.disabled=true; btn.textContent="Enviando...";
+  var errEl=$("#errmsg"), errEl2=$("#errmsg2");
+  function setErr(msg){ if(errEl) errEl.textContent=msg; if(errEl2) errEl2.textContent=msg; }
+  if(!ok){setErr("Preencha todos os campos.");return;}
+  if(lead.whatsapp.replace(/\D/g,"").length<10){setErr("WhatsApp inválido.");return;}
+  setErr("");
+  var btns=document.querySelectorAll(".cta");
+  btns.forEach(function(b){b.disabled=true;b.textContent="Enviando...";});
   lead.answers=answers;
   fetch(WEBHOOK_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(lead)
   }).then(function(){ next(); })
-    .catch(function(){ errEl.textContent="Erro ao enviar. Tente novamente."; btn.disabled=false; btn.textContent=s.cta; });
+    .catch(function(){ setErr("Erro ao enviar. Tente novamente."); btns.forEach(function(b){b.disabled=false;b.textContent=s.cta;}); });
 }
 
 function loadDepo(id){
