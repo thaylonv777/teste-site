@@ -131,6 +131,7 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 "use strict";
 // ======= CONFIGURAR AQUI =======
 var WEBHOOK_URL = "https://n8n.manuai.com.br/webhook/funil-dentista-lead";
+var STEP_WEBHOOK_URL = "https://n8n.manuai.com.br/webhook/funil-dentista-step";
 // ================================
 
 var steps=[
@@ -168,11 +169,29 @@ var idx=0, answers={};
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
+function sessionId(){
+  try{
+    var k="funil_sid", v=sessionStorage.getItem(k);
+    if(!v){ v=Date.now().toString(36)+Math.random().toString(36).slice(2,10); sessionStorage.setItem(k,v); }
+    return v;
+  }catch(e){ return "nosess-"+Date.now(); }
+}
+function trackStep(s){
+  try{
+    fetch(STEP_WEBHOOK_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({session_id:sessionId(),step_index:idx,step_total:steps.length,step_label:(s.q||s.title||s.type),step_type:s.type,origem:"funil-dentista"})
+    }).catch(function(){});
+  }catch(e){}
+}
+
 function render(){
   var s=steps[idx];
   $("#bar").style.width=(idx/(steps.length-1)*100)+"%";
   $("#stepno").textContent="Etapa "+(idx+1)+" de "+steps.length;
   var scr=$("#screen"), ft=$("#footer"); scr.innerHTML=""; ft.innerHTML="";
+  trackStep(s);
   if(s.type==="intro"){
     scr.innerHTML='<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>';
     ft.appendChild(mkCta(s.cta,next));
