@@ -187,6 +187,7 @@ function render(){
     if(s.formTitle) f+='<div class="closer-form-title">'+esc(s.formTitle)+'</div>';
     f+=fieldsHtml(s.fields,false);
     f+='<div class="err" id="errmsg"></div>';
+    f+='<button type="button" class="cta" id="ctaMain">'+esc(s.cta)+'</button>';
     if(s.cards&&s.cards.length){
       f+='<div class="closer-divider"></div>';
       if(s.cardsTitle) f+='<div class="closer-section-title">'+esc(s.cardsTitle)+'</div>';
@@ -206,6 +207,7 @@ function render(){
     }
     scr.innerHTML=f;
     bindFieldSync();
+    var ctaMain=$("#ctaMain"); if(ctaMain) ctaMain.onclick=submitLead;
     var ctaCompact=$("#ctaCompact"); if(ctaCompact) ctaCompact.onclick=submitLead;
     var btn=mkCta(s.cta,submitLead);
     ft.appendChild(btn); ft.appendChild(mkBack());
