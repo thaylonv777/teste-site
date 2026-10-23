@@ -53,6 +53,9 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .back{display:block;margin:12px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline}
 .err{color:#F08A7E;font-size:13px;text-align:center;margin-top:8px;min-height:16px}
+.mini-list{list-style:none;margin:18px 0 0;padding:14px 16px;display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs)}
+.mini-list li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--muted);line-height:1.4}
+.mini-list svg{flex:none;width:16px;height:16px;margin-top:1px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* etapa de vídeo depoimento */
 .depo-frame{position:relative;width:100%;max-width:260px;margin:0 auto 18px;aspect-ratio:9/16;border-radius:24px;padding:6px;
@@ -98,7 +101,8 @@ var steps=[
    options:["5 a 10","10 a 20","20 a 40","Mais de 40"]},
   {type:"video",eyebrow:"Depoimento",title:"Veja quem já aplicou esse método",
    sub:"Clínica odontológica do Rio Grande do Sul, Dra. Thays.",yt:"VFz4CQwzpHQ",cta:"Continuar →"},
-  {type:"form",title:"Última etapa",sub:"Pra onde enviamos sua análise gratuita? Nossa equipe entra em contato pelo WhatsApp.",
+  {type:"form",eyebrow:"O que você recebe",title:"Última etapa",sub:"Preencha e nossa equipe te chama no WhatsApp com a análise.",
+   highlights:["Anúncios validados há mais de 7 anos","Agente de IA respondendo seus leads 24/7","Follow-up automático, sem lead esquecido"],
    fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
    cta:"Quero minha análise gratuita"},
   {type:"thanks",title:"Recebemos seus dados",sub:"Nossa equipe vai te chamar no WhatsApp em até 1 dia útil com a análise da sua clínica."}
@@ -130,8 +134,13 @@ function render(){
     ft.appendChild(mkCta(s.cta,next)); ft.appendChild(mkBack());
     loadDepo(s.yt);
   }else if(s.type==="form"){
-    var f='<div class="q">'+esc(s.title)+'</div><p class="sub">'+esc(s.sub)+'</p>';
+    var f='<div class="eyebrow">'+esc(s.eyebrow||"")+'</div><div class="q">'+esc(s.title)+'</div><p class="sub">'+esc(s.sub)+'</p>';
     s.fields.forEach(function(fd){f+='<div class="field"><label for="f_'+fd.k+'">'+esc(fd.label)+'</label><input id="f_'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';});
+    if(s.highlights&&s.highlights.length){
+      f+='<ul class="mini-list">';
+      s.highlights.forEach(function(h){f+='<li><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'+esc(h)+'</li>';});
+      f+='</ul>';
+    }
     f+='<div class="err" id="errmsg"></div>';
     scr.innerHTML=f;
     var btn=mkCta(s.cta,submitLead);
