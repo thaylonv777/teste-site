@@ -53,9 +53,18 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .back{display:block;margin:12px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline}
 .err{color:#F08A7E;font-size:13px;text-align:center;margin-top:8px;min-height:16px}
-.mini-list{list-style:none;margin:18px 0 0;padding:14px 16px;display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs)}
+.mini-list{list-style:none;margin:0;padding:14px 16px;display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs)}
 .mini-list li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--muted);line-height:1.4}
 .mini-list svg{flex:none;width:16px;height:16px;margin-top:1px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* etapa final: mini landing page */
+.closer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 18px}
+.closer-stats .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:14px 8px;text-align:center}
+.closer-stats .num{font-family:var(--disp);font-weight:300;letter-spacing:-.02em;font-size:clamp(20px,5.5vw,26px);
+  background:linear-gradient(110deg,#F3E2B3 0%,#C9A45C 55%,#9C7A3C 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.closer-stats .lbl{font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.02em;line-height:1.3}
+.closer-divider{height:1px;background:var(--line);margin:18px 0}
+.closer-form-title{font-size:13.5px;font-weight:600;color:var(--fg);margin:0 0 12px;text-align:center}
 
 /* etapa de vídeo depoimento */
 .depo-frame{position:relative;width:100%;max-width:260px;margin:0 auto 18px;aspect-ratio:9/16;border-radius:24px;padding:6px;
@@ -101,8 +110,11 @@ var steps=[
    options:["5 a 10","10 a 20","20 a 40","Mais de 40"]},
   {type:"video",eyebrow:"Depoimento",title:"Veja quem já aplicou esse método",
    sub:"Clínica odontológica do Rio Grande do Sul, Dra. Thays.",yt:"VFz4CQwzpHQ",cta:"Continuar →"},
-  {type:"form",eyebrow:"O que você recebe",title:"Última etapa",sub:"Preencha e nossa equipe te chama no WhatsApp com a análise.",
-   highlights:["Anúncios validados há mais de 7 anos","Agente de IA respondendo seus leads 24/7","Follow-up automático, sem lead esquecido"],
+  {type:"form",eyebrow:"Chega de agenda vazia",title:"Uma estrutura completa pra transformar lead em paciente",
+   sub:"Anúncios validados, atendimento automático e nenhuma oportunidade perdida.",
+   stats:[{num:"24/7",lbl:"Atendimento, sem pausa"},{num:"7+",lbl:"Anos de método validado"},{num:"100%",lbl:"Follow-up automático"}],
+   highlights:["Anúncios com estrutura validada em clínicas odontológicas","Agente de IA respondendo e qualificando seus leads","Nenhum lead esquecido, sem fila de espera"],
+   formTitle:"Pra onde enviamos sua análise gratuita?",
    fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
    cta:"Quero minha análise gratuita"},
   {type:"thanks",title:"Recebemos seus dados",sub:"Nossa equipe vai te chamar no WhatsApp em até 1 dia útil com a análise da sua clínica."}
@@ -135,12 +147,19 @@ function render(){
     loadDepo(s.yt);
   }else if(s.type==="form"){
     var f='<div class="eyebrow">'+esc(s.eyebrow||"")+'</div><div class="q">'+esc(s.title)+'</div><p class="sub">'+esc(s.sub)+'</p>';
-    s.fields.forEach(function(fd){f+='<div class="field"><label for="f_'+fd.k+'">'+esc(fd.label)+'</label><input id="f_'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';});
+    if(s.stats&&s.stats.length){
+      f+='<div class="closer-stats">';
+      s.stats.forEach(function(st){f+='<div class="stat"><div class="num">'+esc(st.num)+'</div><div class="lbl">'+esc(st.lbl)+'</div></div>';});
+      f+='</div>';
+    }
     if(s.highlights&&s.highlights.length){
       f+='<ul class="mini-list">';
       s.highlights.forEach(function(h){f+='<li><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'+esc(h)+'</li>';});
       f+='</ul>';
     }
+    f+='<div class="closer-divider"></div>';
+    if(s.formTitle) f+='<div class="closer-form-title">'+esc(s.formTitle)+'</div>';
+    s.fields.forEach(function(fd){f+='<div class="field"><label for="f_'+fd.k+'">'+esc(fd.label)+'</label><input id="f_'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';});
     f+='<div class="err" id="errmsg"></div>';
     scr.innerHTML=f;
     var btn=mkCta(s.cta,submitLead);
