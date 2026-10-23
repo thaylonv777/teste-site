@@ -210,12 +210,15 @@ function render(){
     bindFieldSync();
     var ctaMain=$("#ctaMain"); if(ctaMain) ctaMain.onclick=submitLead;
     var ctaCompact=$("#ctaCompact"); if(ctaCompact) ctaCompact.onclick=submitLead;
-    var btn=mkCta(s.cta,submitLead);
+    var btn=mkCta("Preencher formulário",scrollToForm);
     ft.appendChild(btn); ft.appendChild(mkBack());
   }else if(s.type==="thanks"){
     scr.innerHTML='<div class="done"><div class="big"></div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p></div>';
   }
   window.scrollTo(0,0);
+}
+function scrollToForm(){
+  var el=$("#f_nome"); if(el){ el.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){el.focus();},350); }
 }
 function mkCta(label,fn){var b=document.createElement("button");b.className="cta";b.textContent=label;b.onclick=fn;return b;}
 function mkBack(){var b=document.createElement("button");b.className="back";b.textContent="← Voltar";b.onclick=prev;return b;}
