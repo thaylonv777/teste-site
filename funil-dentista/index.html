@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mais Pacientes para sua Clínica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0A0A0B; --surface:#111113; --surface2:#17171a; --line:rgba(201,164,92,.18);
+  --fg:#F3EEE4; --muted:rgba(243,238,228,.62);
+  --gold:#C9A45C; --gold-l:#E6CE94; --gold-deep:#9C7A3C; --accent-ink:#0A0A0B;
+  --r:16px; --rs:11px; --maxw:600px;
+  --disp:"Inter",-apple-system,sans-serif;
+  --body:"Inter",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{min-height:100%;display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:linear-gradient(var(--bg) 70%,transparent);padding-block:16px 10px;z-index:5}
+.brand{display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:12px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.brand b{font-family:var(--disp);font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(110deg,#F3E2B3 0%,#C9A45C 55%,#9C7A3C 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.bar{height:5px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E6CE94,#C9A45C);border-radius:99px;transition:width .35s ease}
+.stepno{margin-top:7px;font-size:12px;color:var(--muted);text-align:center}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:22px}
+.eyebrow{font-family:var(--body);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-align:center;font-weight:600}
+h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp(26px,6.5vw,36px);line-height:1.15;margin:0 0 14px;text-align:center;text-wrap:balance}
+.q{font-family:var(--disp);font-weight:600;letter-spacing:-.01em;font-size:clamp(21px,5vw,27px);line-height:1.2;margin:0 0 20px;text-align:center;text-wrap:balance}
+.sub{color:var(--muted);text-align:center;max-width:46ch;margin:0 auto 22px;font-size:16px}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;background:var(--surface);border:1.5px solid var(--line);color:var(--fg);border-radius:var(--r);padding:16px 17px;font:inherit;font-size:16px;transition:.16s}
+.opt:hover{border-color:var(--gold);background:var(--surface2)}
+.opt .mk{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--muted)}
+.opt:hover .mk{border-color:var(--gold);color:var(--gold)}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13.5px;color:var(--muted)}
+.field input{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--rs);padding:14px 15px;color:var(--fg);font:inherit;font-size:16px}
+.field input:focus{outline:none;border-color:var(--gold)}
+.done{text-align:center}
+.done .big{width:72px;height:72px;border-radius:50%;background:rgba(201,164,92,.12);border:2px solid var(--gold);display:grid;place-items:center;margin:0 auto 18px}
+.done .big::after{content:"";width:20px;height:36px;border:solid var(--gold);border-width:0 5px 5px 0;transform:rotate(45deg) translate(-2px,-4px)}
+.footer{padding-block:14px calc(18px + env(safe-area-inset-bottom,0px));position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 34%)}
+.cta{width:100%;border:none;border-radius:999px;background:linear-gradient(135deg,#E6CE94 0%,#C9A45C 50%,#A8853F 100%);color:var(--accent-ink);font-weight:700;font-size:16.5px;padding:17px;cursor:pointer;transition:.15s;box-shadow:0 12px 34px -10px rgba(201,164,92,.5)}
+.cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.back{display:block;margin:12px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline}
+.err{color:#F08A7E;font-size:13px;text-align:center;margin-top:8px;min-height:16px}
+
+/* etapa de vídeo depoimento */
+.depo-frame{position:relative;width:100%;max-width:260px;margin:0 auto 18px;aspect-ratio:9/16;border-radius:24px;padding:6px;
+  background:linear-gradient(160deg,rgba(230,206,148,.55),rgba(201,164,92,.12) 40%,rgba(201,164,92,.4));
+  box-shadow:0 30px 70px -24px rgba(201,164,92,.35)}
+.depo-screen{position:relative;width:100%;height:100%;border-radius:19px;overflow:hidden;background:#000}
+.depo-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.depo-sound{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:3;display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:999px;border:1px solid rgba(230,206,148,.55);background:rgba(10,10,11,.72);
+  backdrop-filter:blur(8px);color:#F3E2B3;font:600 12px/1 var(--body);cursor:pointer;white-space:nowrap}
+.depo-sound svg{width:14px;height:14px;stroke:#E6CE94;fill:none;stroke-width:1.8}
+.depo-tag{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:4px;font-size:13.5px;color:var(--muted)}
+.depo-tag b{color:var(--gold-l)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><span class="dot"></span><b>Manu Odonto</b></div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="stepno" id="stepno"></div>
+  </div>
+  <main id="screen"></main>
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+"use strict";
+// ======= CONFIGURAR AQUI =======
+var WEBHOOK_URL = "https://n8n.manuai.com.br/webhook/funil-dentista-lead";
+// ================================
+
+var steps=[
+  {type:"intro",eyebrow:"Para dentistas",title:"Preencha sua agenda com pacientes que pagam o que seu tratamento vale",
+   sub:"5 perguntas rápidas pra entender a sua clínica e mostrar se faz sentido pra você.",cta:"Começar →"},
+  {type:"single",q:"Hoje você investe em anúncios para atrair pacientes?",
+   options:["Não, nunca investi","Já tentei, mas não deu retorno","Sim, invisto atualmente"]},
+  {type:"single",q:"Quanto sua clínica fatura por mês hoje?",
+   options:["Até R$ 20 mil","R$ 20 a 50 mil","R$ 50 a 100 mil","Acima de R$ 100 mil"]},
+  {type:"single",q:"Qual sua maior dificuldade hoje?",
+   options:["Agenda vazia em horários específicos","Pacientes de baixo ticket","Dependência de indicação","Falta de tempo pra cuidar de marketing"]},
+  {type:"single",q:"Quantos pacientes novos por mês você gostaria de atrair?",
+   options:["5 a 10","10 a 20","20 a 40","Mais de 40"]},
+  {type:"video",eyebrow:"Depoimento",title:"Veja quem já aplicou esse método",
+   sub:"Clínica odontológica do Rio Grande do Sul, Dra. Thays.",yt:"VFz4CQwzpHQ",cta:"Continuar →"},
+  {type:"form",title:"Última etapa",sub:"Pra onde enviamos sua análise gratuita? Nossa equipe entra em contato pelo WhatsApp.",
+   fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
+   cta:"Quero minha análise gratuita"},
+  {type:"thanks",title:"Recebemos seus dados",sub:"Nossa equipe vai te chamar no WhatsApp em até 1 dia útil com a análise da sua clínica."}
+];
+
+var idx=0, answers={};
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function render(){
+  var s=steps[idx];
+  $("#bar").style.width=(idx/(steps.length-1)*100)+"%";
+  $("#stepno").textContent="Etapa "+(idx+1)+" de "+steps.length;
+  var scr=$("#screen"), ft=$("#footer"); scr.innerHTML=""; ft.innerHTML="";
+  if(s.type==="intro"){
+    scr.innerHTML='<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>';
+    ft.appendChild(mkCta(s.cta,next));
+  }else if(s.type==="single"){
+    var h='<div class="q">'+esc(s.q)+'</div><div class="opts">';
+    s.options.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><span class="mk">'+(i+1)+'</span>'+esc(o)+'</button>';});
+    scr.innerHTML=h+'</div>';
+    scr.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){answers[s.q]=s.options[b.dataset.i];setTimeout(next,150);};});
+    if(idx>0) ft.appendChild(mkBack());
+  }else if(s.type==="video"){
+    scr.innerHTML='<div class="eyebrow">'+esc(s.eyebrow)+'</div><div class="q">'+esc(s.title)+'</div><p class="sub">'+esc(s.sub)+'</p>'+
+      '<div class="depo-frame"><div class="depo-screen" id="depoScreen" data-yt="'+esc(s.yt)+'">'+
+      '<button type="button" class="depo-sound" id="depoSound"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg><span>Ativar som</span></button>'+
+      '</div></div>';
+    ft.appendChild(mkCta(s.cta,next)); ft.appendChild(mkBack());
+    loadDepo(s.yt);
+  }else if(s.type==="form"){
+    var f='<div class="q">'+esc(s.title)+'</div><p class="sub">'+esc(s.sub)+'</p>';
+    s.fields.forEach(function(fd){f+='<div class="field"><label for="f_'+fd.k+'">'+esc(fd.label)+'</label><input id="f_'+fd.k+'" type="'+(fd.k==="whatsapp"?"tel":"text")+'" autocomplete="off"></div>';});
+    f+='<div class="err" id="errmsg"></div>';
+    scr.innerHTML=f;
+    var btn=mkCta(s.cta,submitLead);
+    ft.appendChild(btn); ft.appendChild(mkBack());
+  }else if(s.type==="thanks"){
+    scr.innerHTML='<div class="done"><div class="big"></div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p></div>';
+  }
+  window.scrollTo(0,0);
+}
+function mkCta(label,fn){var b=document.createElement("button");b.className="cta";b.textContent=label;b.onclick=fn;return b;}
+function mkBack(){var b=document.createElement("button");b.className="back";b.textContent="← Voltar";b.onclick=prev;return b;}
+function next(){if(idx<steps.length-1){idx++;render();}}
+function prev(){if(idx>0){idx--;render();}}
+
+function submitLead(){
+  var s=steps[idx], lead={}, ok=true;
+  s.fields.forEach(function(fd){var v=$("#f_"+fd.k).value.trim();lead[fd.k]=v;if(!v)ok=false;});
+  var errEl=$("#errmsg");
+  if(!ok){errEl.textContent="Preencha todos os campos.";return;}
+  if(lead.whatsapp.replace(/\D/g,"").length<10){errEl.textContent="WhatsApp inválido.";return;}
+  errEl.textContent="";
+  var btn=document.querySelector(".cta"); btn.disabled=true; btn.textContent="Enviando...";
+  lead.answers=answers;
+  fetch(WEBHOOK_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(lead)
+  }).then(function(){ next(); })
+    .catch(function(){ errEl.textContent="Erro ao enviar. Tente novamente."; btn.disabled=false; btn.textContent=s.cta; });
+}
+
+function loadDepo(id){
+  var box=$("#depoScreen"); if(!box) return;
+  var ifr=document.createElement("iframe");
+  ifr.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&mute=1&loop=1&playlist="+id+"&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&enablejsapi=1";
+  ifr.title="Depoimento"; ifr.setAttribute("tabindex","-1"); ifr.allow="autoplay; encrypted-media";
+  box.insertBefore(ifr, box.querySelector(".depo-sound"));
+  var sb=$("#depoSound"), on=false;
+  function cmd(f){ if(ifr.contentWindow) ifr.contentWindow.postMessage(JSON.stringify({event:"command",func:f,args:[]}),"*"); }
+  var icOn='<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg><span>Som ativado</span>';
+  var icOff=sb.innerHTML;
+  sb.onclick=function(){
+    on=!on;
+    if(on){ cmd("unMute"); cmd("playVideo"); sb.innerHTML=icOn; }
+    else { cmd("mute"); sb.innerHTML=icOff; }
+  };
+}
+
+render();
+</script>
+</body>
+</html>
