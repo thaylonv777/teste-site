@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mais Pacientes para sua Clínica</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0B'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23C9A45C'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="assets/intro-hero.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -50,6 +51,15 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);
 .stepno{margin-top:7px;font-size:12px;color:var(--muted);text-align:center}
 main{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:22px calc(108px + env(safe-area-inset-bottom,0px))}
 .eyebrow{font-family:var(--body);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-align:center;font-weight:600}
+.intro-hero{position:relative;border-radius:var(--r);overflow:hidden;min-height:68vh;max-height:560px;display:flex;align-items:flex-end;margin:-6px 0 0}
+.intro-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;z-index:0}
+.intro-hero::before{content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(10,10,11,.1) 0%,rgba(10,10,11,.5) 42%,rgba(10,10,11,.94) 82%,var(--bg) 100%)}
+.intro-hero-content{position:relative;z-index:2;padding:26px 22px 28px;width:100%}
+.intro-hero-content .eyebrow,.intro-hero-content h1{text-align:left}
+.intro-hero-content .sub{text-align:left;margin:0 0 14px}
+.intro-social{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--gold-l);font-weight:500}
+.intro-social .dot2{width:5px;height:5px;border-radius:50%;background:var(--gold);flex:none}
 h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp(26px,6.5vw,36px);line-height:1.15;margin:0 0 14px;text-align:center;text-wrap:balance}
 .q{font-family:var(--disp);font-weight:600;letter-spacing:-.01em;font-size:clamp(21px,5vw,27px);line-height:1.2;margin:0 0 20px;text-align:center;text-wrap:balance}
 .sub{color:var(--muted);text-align:center;max-width:46ch;margin:0 auto 22px;font-size:16px}
@@ -135,8 +145,10 @@ var STEP_WEBHOOK_URL = "https://n8n.manuai.com.br/webhook/funil-dentista-step";
 // ================================
 
 var steps=[
-  {type:"intro",eyebrow:"Para dentistas",title:"Preencha sua agenda com pacientes que pagam o que seu tratamento vale",
-   sub:"5 perguntas rápidas pra entender a sua clínica e mostrar se faz sentido pra você.",cta:"Começar →"},
+  {type:"intro",eyebrow:"Para dentistas",title:"Sua agenda vazia enquanto a clínica ao lado lota de pacientes?",
+   sub:"Descubra em 1 minuto se sua clínica está perdendo pacientes por falta de estrutura.",
+   social:"Método aplicado em clínicas reais, incluindo a da Dra. Thays (RS)",
+   hero:"assets/intro-hero.jpg",cta:"Começar →"},
   {type:"single",q:"Hoje você investe em anúncios para atrair pacientes?",
    options:["Não, nunca investi","Já tentei, mas não deu retorno","Sim, invisto atualmente"]},
   {type:"single",q:"Quanto sua clínica fatura por mês hoje?",
@@ -193,7 +205,19 @@ function render(){
   var scr=$("#screen"), ft=$("#footer"); scr.innerHTML=""; ft.innerHTML="";
   trackStep(s);
   if(s.type==="intro"){
-    scr.innerHTML='<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>';
+    var introHtml='';
+    if(s.hero){
+      introHtml+='<div class="intro-hero"><picture>'+
+        '<source srcset="'+esc(s.hero.replace(/\.jpg$/,".webp"))+'" type="image/webp">'+
+        '<img src="'+esc(s.hero)+'" alt="" width="1000" height="666" loading="eager" fetchpriority="high">'+
+        '</picture><div class="intro-hero-content">'+
+        '<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>'+
+        (s.social?'<div class="intro-social"><span class="dot2"></span>'+esc(s.social)+'</div>':'')+
+        '</div></div>';
+    }else{
+      introHtml='<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>';
+    }
+    scr.innerHTML=introHtml;
     ft.appendChild(mkCta(s.cta,next));
   }else if(s.type==="single"){
     var h='<div class="q">'+esc(s.q)+'</div><div class="opts">';
