@@ -193,7 +193,7 @@ function trackStep(s){
     fetch(STEP_WEBHOOK_URL,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({session_id:sessionId(),step_index:idx,step_total:steps.length,step_label:(s.q||s.title||s.type),step_type:s.type,origem:"funil-dentista"})
+      body:JSON.stringify({session_id:sessionId(),step_index:idx,step_total:steps.length,step_label:(s.q||s.title||s.type),step_type:s.type,origem:"funil-dentista",respostas_ate_aqui:JSON.stringify(answers)})
     }).catch(function(){});
   }catch(e){}
 }
