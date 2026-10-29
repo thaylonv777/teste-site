@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel — Átrio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315191F'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2351B5BB'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#0A0A0B; --surface:#111113; --surface2:#17171a; --line:rgba(243,238,228,.12);
+  --fg:#F3EEE4; --muted:rgba(243,238,228,.62);
+  --accent:#51B5BB; --accent-l:#8ED3D7; --accent-deep:#2F8488;
+  --r:16px; --rs:11px; --maxw:900px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui,-apple-system,sans-serif;
+  padding:28px 16px 60px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.brand b{font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  background:linear-gradient(110deg,#C7ECEE 0%,#51B5BB 55%,#2F8488 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);font-size:13px}
+.refresh{background:var(--surface);border:1px solid var(--line);color:var(--accent-l);font-size:13px;font-weight:600;
+  padding:9px 16px;border-radius:999px;cursor:pointer}
+.refresh:hover{border-color:var(--accent)}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.tab{background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:600;
+  padding:8px 16px;border-radius:999px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px}
+.tab .d{width:7px;height:7px;border-radius:50%;flex:none}
+.tab.on{color:#07181a;background:var(--accent-l);border-color:var(--accent-l)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:26px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:16px}
+.card .n{font-size:26px;font-weight:800;color:var(--accent-l)}
+.card .l{font-size:12px;color:var(--muted);margin-top:2px}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+
+.compare{display:flex;flex-direction:column;gap:8px;margin-bottom:30px}
+.cmp-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:13px 16px;cursor:pointer}
+.cmp-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cmp-left{display:flex;align-items:center;gap:9px;min-width:0}
+.cmp-left .d{width:8px;height:8px;border-radius:50%;flex:none}
+.cmp-left b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-right{display:flex;align-items:center;gap:16px;flex:none;font-size:12.5px;color:var(--muted)}
+.cmp-right b{color:var(--fg);font-size:14px}
+.cmp-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.06);margin-top:10px;overflow:hidden}
+.cmp-bar i{display:block;height:100%}
+
+.funnel{display:flex;flex-direction:column;gap:10px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:14px 16px;position:relative;overflow:hidden}
+.step .bar{position:absolute;left:0;top:0;bottom:0;z-index:0}
+.step-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.step-left{display:flex;align-items:center;gap:12px;min-width:0}
+.step-idx{font-weight:800;font-size:13px;flex:none;width:26px}
+.step-label{font-size:13.5px;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}
+.step-right{display:flex;align-items:center;gap:16px;flex:none}
+.step-n{font-weight:700;font-size:15px}
+.step-pct{font-size:12px;color:var(--muted);min-width:46px;text-align:right}
+.drop{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(239,68,68,.12);color:#f87171;font-weight:600}
+.drop.ok{background:rgba(74,222,128,.12);color:#4ade80}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:40px 0}
+.updated{color:var(--muted);font-size:11.5px;margin-top:18px;text-align:center}
+
+.sessions{display:flex;flex-direction:column;gap:8px;margin-top:34px}
+.sess{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px;cursor:pointer}
+.sess-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sess-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:1 1 auto;min-width:0}
+.sess-step{font-size:12px;color:var(--accent-l);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sess-tag,.sess-count,.sess-caret{flex:none}
+.sess-count{font-size:11px;color:var(--muted)}
+.sess-caret{color:var(--accent);font-size:11px;transition:.15s}
+.sess.open .sess-caret{transform:rotate(90deg)}
+.sess-answers{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--fg)}
+.sess.open .sess-answers{display:block}
+.ans-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.ans-row:last-child{border-bottom:none}
+.ans-q{color:var(--muted);flex:1}
+.ans-a{color:var(--accent-l);font-weight:600;text-align:right;flex:none;max-width:50%}
+.ans-empty{color:var(--muted);font-size:12px}
+.sess-when{flex:none;font-size:12.5px;font-weight:600;color:var(--fg);white-space:nowrap}
+.sess-src{flex:none;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;color:#fff}
+.src-tt{background:#111;box-shadow:inset 0 0 0 1px #25F4EE,2px 0 0 #FE2C55}
+.src-meta{background:#0866FF}
+.src-other{background:#3A3F4B}
+.sess-tag{font-size:11px;font-weight:700;color:#07181a;border-radius:999px;padding:2px 8px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.soon{color:var(--muted);font-size:13.5px;line-height:1.6;padding:30px 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <div class="brand"><span class="dot"></span><b>Painel Átrio</b></div>
+      <div class="sub">Ecossistema de funis e campanhas</div>
+    </div>
+    <button class="refresh" id="btnRefresh">↻ Atualizar</button>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="view"></div>
+</div>
+
+<script>
+/* ============================================================
+   REGISTRO DE FONTES — pra adicionar um funil novo, só criar
+   uma entrada aqui com um statsUrl que devolva o mesmo formato:
+   { total_sessions, total_eventos, steps:[...], sessions:[...], generated_at }
+   Campos opcionais por fonte: tagField (resposta destacada na
+   lista de sessões, ex. "nicho" ou "preco") e tagPrefix.
+   Fontes do tipo "soon" ainda não têm integração — aparecem na
+   aba mas mostram um aviso, reservando o lugar no painel.
+   ============================================================ */
+var FONTES = [
+  { id:"site", type:"funnel", label:"Quiz · Site", color:"#51B5BB", statsUrl:"https://n8n.manuai.com.br/webhook/funil-site-stats", tagField:"nicho" },
+  { id:"vgv",  type:"funnel", label:"Código VGV",  color:"#C9A45C", statsUrl:"https://n8n.manuai.com.br/webhook/funil-vgv-stats",  tagField:"preco", tagPrefix:"R$ " },
+  { id:"dentista", type:"funnel", label:"Funil Dentista", color:"#D98E73", statsUrl:"https://n8n.manuai.com.br/webhook/funil-dentista-stats", tagField:"nicho" },
+  { id:"ads",     type:"soon", label:"Campanhas de anúncio" },
+  { id:"clientes",type:"soon", label:"Clientes" }
+];
+
+var cache = {}; // id -> data
+var active = "geral";
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function renderTabs(){
+  var html = '<button class="tab'+(active==="geral"?" on":"")+'" data-id="geral"><span class="d" style="background:#fff"></span>Visão geral</button>';
+  FONTES.forEach(function(f){
+    html += '<button class="tab'+(active===f.id?" on":"")+'" data-id="'+f.id+'"><span class="d" style="background:'+(f.color||"#777")+'"></span>'+esc(f.label)+'</button>';
+  });
+  document.getElementById("tabs").innerHTML = html;
+  document.querySelectorAll(".tab").forEach(function(btn){
+    btn.onclick = function(){ active = btn.getAttribute("data-id"); try{localStorage.setItem("painel_tab",active)}catch(e){}; draw(); };
+  });
+}
+
+function fetchFonte(f){
+  if(f.type !== "funnel") return Promise.resolve(null);
+  if(cache[f.id]) return Promise.resolve(cache[f.id]);
+  return fetch(f.statsUrl).then(function(r){ return r.json(); }).then(function(d){ cache[f.id]=d; return d; }).catch(function(){ return null; });
+}
+
+function loadAll(){
+  return Promise.all(FONTES.map(fetchFonte));
+}
+
+function convRate(data){
+  if(!data) return 0;
+  var steps = data.steps||[];
+  var last = steps.length ? steps[steps.length-1] : null;
+  return (data.total_sessions && last) ? Math.round((last.sessions/data.total_sessions)*1000)/10 : 0;
+}
+
+function viewGeral(){
+  var funis = FONTES.filter(function(f){ return f.type==="funnel"; });
+  var totalSessions = 0, totalEventos = 0, weightedConv = 0;
+  var rows = funis.map(function(f){
+    var d = cache[f.id];
+    var sessions = d ? (d.total_sessions||0) : 0;
+    var eventos = d ? (d.total_eventos||0) : 0;
+    var conv = convRate(d);
+    totalSessions += sessions; totalEventos += eventos;
+    return {f:f, sessions:sessions, eventos:eventos, conv:conv, ok: !!d};
+  });
+  var maxSessions = Math.max.apply(null, rows.map(function(r){return r.sessions}).concat([1]));
+
+  var html = '<div class="cards">'+
+    '<div class="card"><div class="n">'+totalSessions+'</div><div class="l">Sessões — todos os funis</div></div>'+
+    '<div class="card"><div class="n">'+totalEventos+'</div><div class="l">Eventos registrados</div></div>'+
+    '<div class="card"><div class="n">'+funis.length+'</div><div class="l">Funis ativos</div></div>'+
+  '</div>';
+
+  html += '<div class="section-title">Comparativo entre funis</div><div class="compare">';
+  rows.forEach(function(r){
+    var pct = maxSessions ? Math.round((r.sessions/maxSessions)*100) : 0;
+    html += '<div class="cmp-row" data-id="'+r.f.id+'">'+
+      '<div class="cmp-top"><div class="cmp-left"><span class="d" style="background:'+r.f.color+'"></span><b>'+esc(r.f.label)+'</b></div>'+
+      '<div class="cmp-right">'+(r.ok?'':'<span>sem dados</span>')+(r.ok?('<span>'+r.conv+'% conversão</span><b>'+r.sessions+'</b>'):'')+'</div></div>'+
+      '<div class="cmp-bar"><i style="width:'+pct+'%;background:'+r.f.color+'"></i></div>'+
+    '</div>';
+  });
+  var soon = FONTES.filter(function(f){ return f.type==="soon"; });
+  if(soon.length){
+    html += soon.map(function(f){
+      return '<div class="cmp-row" style="cursor:default;opacity:.55"><div class="cmp-top"><div class="cmp-left"><span class="d" style="background:#555"></span><b>'+esc(f.label)+'</b></div>'+
+        '<div class="cmp-right"><span>em breve</span></div></div></div>';
+    }).join("");
+  }
+  html += '</div>';
+
+  document.getElementById("view").innerHTML = html;
+  document.querySelectorAll(".cmp-row[data-id]").forEach(function(el){
+    el.onclick = function(){ active = el.getAttribute("data-id"); draw(); };
+  });
+}
+
+function viewSoon(f){
+  document.getElementById("view").innerHTML =
+    '<div class="section-title">'+esc(f.label)+'</div>'+
+    '<div class="soon">Essa fonte ainda não está integrada ao painel.<br>Quando os dados de '+esc(f.label).toLowerCase()+' estiverem disponíveis, essa aba passa a mostrar os indicadores aqui — sem mudar o resto do painel.</div>';
+}
+
+function viewFunil(f){
+  var data = cache[f.id];
+  if(!data){
+    document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
+    return;
+  }
+  var steps = data.steps||[];
+  var totalStart = data.total_sessions||0;
+  var conv = convRate(data);
+  var html = '<div class="cards">'+
+    '<div class="card"><div class="n">'+totalStart+'</div><div class="l">Sessões iniciadas</div></div>'+
+    '<div class="card"><div class="n">'+(data.total_eventos||0)+'</div><div class="l">Eventos registrados</div></div>'+
+    '<div class="card"><div class="n">'+conv+'%</div><div class="l">Chegou até a última etapa</div></div>'+
+  '</div>';
+
+  html += '<div class="section-title">Etapas do funil</div><div class="funnel">';
+  if(!steps.length){
+    html += '<div class="empty">Sem dados ainda.</div>';
+  } else {
+    steps.forEach(function(s,i){
+      var dropClass = s.pct_vs_prev>=70 ? "ok" : "";
+      html += '<div class="step"><div class="bar" style="width:'+s.pct_of_start+'%;background:linear-gradient(90deg,'+f.color+'38,'+f.color+'10)"></div>'+
+        '<div class="step-content">'+
+          '<div class="step-left"><span class="step-idx" style="color:'+f.color+'">'+(i+1)+'</span><span class="step-label">'+esc(s.step_label)+'</span></div>'+
+          '<div class="step-right">'+
+            (i>0?'<span class="drop '+dropClass+'">'+s.pct_vs_prev+'% vs anterior</span>':'')+
+            '<span class="step-pct">'+s.pct_of_start+'%</span>'+
+            '<span class="step-n">'+s.sessions+'</span>'+
+          '</div>'+
+        '</div></div>';
+    });
+  }
+  html += '</div>';
+
+  html += '<div class="section-title" style="margin-top:34px">Sessões recentes</div><div class="sessions" id="sessions"></div>';
+  html += '<div class="updated">Atualizado em '+new Date(data.generated_at||Date.now()).toLocaleString("pt-BR")+'</div>';
+  document.getElementById("view").innerHTML = html;
+
+  var sess = document.getElementById("sessions");
+  var list = data.sessions||[];
+  if(!list.length){
+    sess.innerHTML = '<div class="empty">Nenhuma sessão registrada ainda.</div>';
+    return;
+  }
+  sess.innerHTML = list.map(function(s,i){
+    var qas = Object.keys(s.respostas||{}).filter(function(k){ return k !== "origem"; });
+    var tag = f.tagField ? (s.respostas||{})[f.tagField] : null;
+    var origem = String((s.respostas||{}).origem||"");
+    var origemHtml = origem
+      ? '<span class="sess-src '+(origem==="tiktok"?"src-tt":origem==="meta"?"src-meta":"src-other")+'">'+
+          esc(origem==="tiktok"?"TikTok":origem==="meta"?"Meta":origem)+'</span>'
+      : '';
+    var answersHtml = qas.length
+      ? qas.map(function(q){ return '<div class="ans-row"><span class="ans-q">'+esc(q)+'</span><span class="ans-a">'+esc(s.respostas[q])+'</span></div>'; }).join("")
+      : '<div class="ans-empty">Nenhuma pergunta respondida ainda (abandonou antes).</div>';
+    var when = s.updated_at ? new Date(s.updated_at).toLocaleString("pt-BR") : "";
+    var whenShort = "";
+    if(s.updated_at){
+      var d = new Date(s.updated_at), mins = Math.floor((Date.now()-d.getTime())/60000);
+      var hhmm = d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+      var rel = mins < 1 ? "agora" : mins < 60 ? "há "+mins+" min" : mins < 1440 ? "há "+Math.floor(mins/60)+" h" : d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+      whenShort = hhmm+" · "+rel;
+    }
+    return '<div class="sess" data-i="'+i+'">'+
+      '<div class="sess-head">'+
+        '<span class="sess-when">'+esc(whenShort)+'</span>'+
+        '<div class="sess-right">'+
+          origemHtml+
+          (tag ? '<span class="sess-tag" style="background:'+f.color+'">'+esc((f.tagPrefix||"")+tag)+'</span>' : '')+
+          '<span class="sess-step">'+esc(s.step_label)+'</span>'+
+          '<span class="sess-count">'+qas.length+' resp.</span>'+
+          '<span class="sess-caret">▸</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="sess-answers">'+answersHtml+(when?'<div class="ans-row"><span class="ans-q">Última atividade</span><span class="ans-a">'+esc(when)+'</span></div>':'')+
+        '<div class="ans-row"><span class="ans-q">Sessão</span><span class="ans-a">'+esc(s.session_id)+'</span></div></div>'+
+    '</div>';
+  }).join("");
+  sess.querySelectorAll(".sess").forEach(function(el){
+    el.onclick = function(){ el.classList.toggle("open"); };
+  });
+}
+
+function draw(){
+  renderTabs();
+  if(active === "geral"){ viewGeral(); return; }
+  var f = FONTES.filter(function(x){ return x.id===active; })[0];
+  if(!f){ active="geral"; renderTabs(); viewGeral(); return; }
+  if(f.type === "soon"){ viewSoon(f); return; }
+  viewFunil(f);
+}
+
+function load(){
+  document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
+  loadAll().then(draw);
+}
+
+document.getElementById("btnRefresh").onclick = function(){ cache = {}; load(); };
+try{ var saved = localStorage.getItem("painel_tab"); if(saved) active = saved; }catch(e){}
+load();
+</script>
+</body>
+</html>
