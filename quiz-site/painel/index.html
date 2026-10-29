@@ -40,6 +40,11 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:16px}
 .card .n{font-size:26px;font-weight:800;color:var(--accent-l)}
 .card .l{font-size:12px;color:var(--muted);margin-top:2px}
+.card .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.card .stat-grid div{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .stat-grid b{color:var(--fg);font-weight:700}
+.sess-metrics{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.6}
+.sess-metrics b{color:var(--fg)}
 .section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
 
 .compare{display:flex;flex-direction:column;gap:8px;margin-bottom:30px}
@@ -220,10 +225,25 @@ function viewAds(f){
   var byCampaign = data.by_campaign || [];
   var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
 
+  function brl(v){ return 'R$ '+(Number(v||0)).toFixed(2); }
+
   var html = '<div class="section-title">Gasto por projeto</div><div class="cards">';
   Object.keys(byProject).forEach(function(p){
     var d = byProject[p];
-    html += '<div class="card"><div class="n">R$ '+d.spend.toFixed(2)+'</div><div class="l">'+esc(NOMES[p]||p)+' · '+d.clicks+' cliques · CPC R$ '+d.cpc.toFixed(2)+'</div></div>';
+    html += '<div class="card"><div class="n">'+brl(d.spend)+'</div><div class="l">'+esc(NOMES[p]||p)+' · '+d.clicks+' cliques · CPC '+brl(d.cpc)+' · CTR '+d.ctr+'%</div>'+
+      '<div class="stat-grid">'+
+        '<div>Resultados <b>'+d.resultados+'</b></div>'+
+        '<div>Custo/resultado <b>'+brl(d.custo_por_resultado)+'</b></div>'+
+        '<div>Checkout iniciado <b>'+d.initiate_checkout+'</b></div>'+
+        '<div>Custo/checkout <b>'+brl(d.custo_por_checkout)+'</b></div>'+
+        '<div>Valor compra <b>'+brl(d.purchase_value)+'</b></div>'+
+        '<div>ROAS <b>'+d.roas+'x</b></div>'+
+        '<div>Impressões <b>'+d.impressions+'</b></div>'+
+        '<div>CPM <b>'+brl(d.cpm)+'</b></div>'+
+        '<div>Alcance <b>'+d.reach+'</b></div>'+
+        '<div>Frequência <b>'+d.frequency+'</b></div>'+
+        '<div>LP views <b>'+d.landing_page_views+'</b></div>'+
+      '</div></div>';
   });
   if(!Object.keys(byProject).length) html += '<div class="empty">Sem dados ainda.</div>';
   html += '</div>';
@@ -236,7 +256,11 @@ function viewAds(f){
       html += '<div class="sess" style="cursor:default">'+
         '<div class="sess-head"><span class="sess-when">'+esc(NOMES[c.projeto]||c.projeto)+'</span>'+
         '<div class="sess-right"><span class="sess-step">'+esc(c.campaign_name)+'</span>'+
-        '<span class="sess-count">R$ '+c.spend.toFixed(2)+' · '+c.clicks+' cliques · CPC R$ '+c.cpc.toFixed(2)+' · CTR '+c.ctr+'%</span></div></div>'+
+        '<span class="sess-count">'+brl(c.spend)+' · '+c.clicks+' cliques · CPC '+brl(c.cpc)+' · CTR '+c.ctr+'%</span></div></div>'+
+        '<div class="sess-metrics">Resultados: <b>'+c.resultados+'</b> · Custo/resultado: <b>'+brl(c.custo_por_resultado)+'</b> · '+
+        'Checkout: <b>'+c.initiate_checkout+'</b> ('+brl(c.custo_por_checkout)+') · '+
+        'Compra: <b>'+brl(c.purchase_value)+'</b> · ROAS: <b>'+c.roas+'x</b><br>'+
+        'CPM: <b>'+brl(c.cpm)+'</b> · Alcance: <b>'+c.reach+'</b> · Frequência: <b>'+c.frequency+'</b> · LP views: <b>'+c.landing_page_views+'</b></div>'+
       '</div>';
     });
   }
