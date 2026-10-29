@@ -335,7 +335,7 @@ var idx=0,lastKey=null,main=document.getElementById('main'),app=document.getElem
 
 function track(s,extra){
   if(!CFG.STEP_URL)return;
-  var p={session_id:SID,step_index:steps.indexOf(s)+1,step_total:steps.length,step_label:s.label,step_type:s.type,origem:CFG.FUNIL,
+  var p={session_id:SID,step_index:steps.indexOf(s),step_total:steps.length,step_label:s.label,step_type:s.type,origem:CFG.FUNIL,
          respostas_ate_aqui:JSON.stringify(A)};
   if(extra)for(var k in extra)p[k]=extra[k];
   try{fetch(CFG.STEP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p),keepalive:true}).catch(function(){})}catch(e){}
