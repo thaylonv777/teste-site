@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Site publicado em até 48h</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0B2E;--bg2:#15104D;
+  --violet:#7C3AED;--magenta:#E040A0;--orange:#FF8A1F;--blue:#3B82F6;
+  --grad-brand:linear-gradient(135deg,#E040A0,#FF8A1F);
+  --grad-text:linear-gradient(90deg,#FF9A1F,#E040A0 55%,#8B5CF6);
+  --grad-price:linear-gradient(180deg,#FFB020,#FF7A1A 45%,#E040A0);
+  --glass:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.14);
+  --txt:#fff;--mut:rgba(255,255,255,.68);
+  --radius:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;
+  background-image:
+   radial-gradient(60% 40% at 0% 0%,rgba(124,58,237,.55),transparent 70%),
+   radial-gradient(55% 40% at 100% 20%,rgba(224,64,160,.35),transparent 70%),
+   radial-gradient(60% 40% at 100% 100%,rgba(255,138,31,.28),transparent 70%);
+  background-attachment:fixed}
+#app{min-height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding:18px 16px calc(24px + env(safe-area-inset-bottom))}
+.bar{height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden;margin:4px 2px 20px;transition:opacity .3s}
+.bar i{display:block;height:100%;width:0;background:var(--grad-brand);border-radius:6px;transition:width .45s ease}
+.hide-bar .bar{opacity:0;height:0;margin:0}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1,h2{font-weight:800;letter-spacing:-.02em;line-height:1.12}
+h1{font-size:clamp(30px,9vw,40px);text-align:center}
+h2{font-size:clamp(24px,7vw,30px);text-align:center;margin-bottom:8px}
+.g{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);text-align:center;font-size:16px;line-height:1.45;margin:0 4px 22px}
+/* card oferta */
+.card{position:relative;border-radius:var(--radius);padding:1.5px;background:linear-gradient(135deg,rgba(224,64,160,.95),rgba(255,138,31,.9) 50%,rgba(124,58,237,.9));margin-top:22px}
+.card>div{border-radius:calc(var(--radius) - 1.5px);background:linear-gradient(160deg,rgba(21,16,77,.96),rgba(11,11,46,.96));padding:20px 18px}
+.price-l{font-size:17px;font-weight:500;color:#fff}
+.price{font-size:68px;font-weight:800;line-height:1;letter-spacing:-.03em;background:var(--grad-price);-webkit-background-clip:text;background-clip:text;color:transparent;margin:2px 0 6px}
+.price small{font-size:30px;margin-right:2px}
+.hint{font-size:13px;color:var(--mut)}
+.pills{display:grid;gap:10px;margin-top:16px}
+.pill{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:16px;background:var(--glass);border:1px solid transparent;
+  background-clip:padding-box;position:relative;font-weight:700;font-size:16px}
+.pill::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(120deg,rgba(224,64,160,.8),rgba(255,138,31,.7));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.chip{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.chip svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.c1{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}.c2{background:linear-gradient(135deg,#FF9A1F,#F0602A)}.c3{background:linear-gradient(135deg,#3B82F6,#2563EB)}.c4{background:linear-gradient(135deg,#E040A0,#B5237D)}
+/* botões */
+.btn{width:100%;border:0;border-radius:18px;padding:18px 20px;font:800 18px 'Plus Jakarta Sans',sans-serif;color:#fff;background:var(--grad-brand);
+  box-shadow:0 10px 30px rgba(224,64,160,.35);cursor:pointer;margin-top:22px;display:flex;justify-content:center;align-items:center;gap:10px;transition:transform .15s,opacity .2s}
+.btn:active{transform:scale(.98)}.btn[disabled]{opacity:.4;box-shadow:none}
+.opts{display:grid;gap:12px;margin-top:6px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;cursor:pointer;color:#fff;font:700 17px/1.25 'Plus Jakarta Sans',sans-serif;
+  padding:12px 16px 12px 12px;border-radius:18px;background:var(--glass);position:relative;transition:transform .12s,background .2s}
+.opt::before{content:"";position:absolute;inset:0;border-radius:18px;padding:1.2px;background:linear-gradient(120deg,rgba(224,64,160,.7),rgba(255,138,31,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.opt:active,.opt.sel{transform:scale(.985);background:linear-gradient(135deg,rgba(224,64,160,.55),rgba(255,138,31,.5))}
+.opt .chip{width:38px;height:38px}
+.opt .n{font-size:15px;font-weight:800}
+input.f{width:100%;font:700 20px 'Plus Jakarta Sans',sans-serif;color:#fff;background:var(--glass);border:1.5px solid var(--line);border-radius:18px;padding:18px;outline:0;margin-top:8px}
+input.f:focus{border-color:var(--magenta);box-shadow:0 0 0 4px rgba(224,64,160,.18)}
+input.f::placeholder{color:rgba(255,255,255,.35)}
+.err{color:#ff8fa3;font-size:14px;text-align:center;min-height:20px;margin-top:8px}
+.safe{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:16px;font-size:12.5px;color:var(--mut)}
+.safe span::before{content:"✓ ";color:#34d399;font-weight:800}
+.ld{display:grid;place-items:center;gap:22px;text-align:center}
+.spin{width:64px;height:64px;border-radius:50%;border:5px solid rgba(255,255,255,.12);border-top-color:var(--orange);border-right-color:var(--magenta);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tag{display:inline-block;margin:0 auto 14px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:800;background:var(--grad-brand)}
+.center{text-align:center}
+.steps{margin-top:16px;display:grid;gap:10px}
+.steps .pill{font-weight:600;font-size:15px}
+footer{margin-top:22px;text-align:center;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.42)}
+</style>
+</head>
+<body>
+<div id="app" class="">
+  <div class="bar"><i id="pg"></i></div>
+  <main id="main"></main>
+  <footer>Átrio Marketing e Business Ltda · Prazo de 48h conta a partir do recebimento do material e da aprovação do pedido. Resultados variam conforme o negócio.</footer>
+</div>
+
+<script>
+/* ===== CONFIG (preencher) ===== */
+var CFG = {
+  STEP_URL : '',   // opcional: webhook de etapas (dashboard). Vazio = desligado
+  LEAD_URL : 'https://n8n.manuai.com.br/webhook/funil-site-lead',
+  WHATS    : '{{NUMERO_WHATSAPP}}',          // ex: 5551999999999
+  META_PIXEL: '{{META_PIXEL_ID}}',
+  TT_PIXEL : '{{TIKTOK_PIXEL_ID}}',
+  FUNIL    : 'quiz-site-48h',
+  PRECO    : '550'
+};
+/* ===== Pixels (só carregam se IDs preenchidos) ===== */
+(function(){
+  if(CFG.META_PIXEL.indexOf('{{')<0){
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init',CFG.META_PIXEL);fbq('track','PageView');
+  }
+})();
+function ev(name,custom){try{if(window.fbq)(custom?fbq('trackCustom',name):fbq('track',name));}catch(e){}}
+
+/* ===== Sessão, origem e UTMs ===== */
+function safeGet(s,k){try{return s.getItem(k)}catch(e){return null}}
+function safeSet(s,k,v){try{s.setItem(k,v)}catch(e){}}
+var SID=safeGet(sessionStorage,'qs_sid');
+if(!SID){SID='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);safeSet(sessionStorage,'qs_sid',SID)}
+var Q=new URLSearchParams(location.search);
+var ORIGEM=safeGet(sessionStorage,'qs_origem');
+if(!ORIGEM){
+  var us=(Q.get('utm_source')||'').toLowerCase();
+  if(us.indexOf('tiktok')>-1||Q.get('ttclid'))ORIGEM='tiktok';
+  else if(Q.get('fbclid')||/^(fb|facebook|ig|instagram|meta)$/.test(us))ORIGEM='meta';
+  else ORIGEM=us||'direto';
+  safeSet(sessionStorage,'qs_origem',ORIGEM);
+}
+var UTMS={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','ttclid'].forEach(function(k){if(Q.get(k))UTMS[k]=Q.get(k)});
+
+/* ===== Respostas ===== */
+var A={origem:ORIGEM};
+var ICON={
+ pen:'<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+ doc:'<svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+ phone:'<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+ x:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>',
+ search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+ chart:'<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>',
+ check:'<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>',
+ img:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>',
+ half:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>',
+ clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>'
+};
+function chip(i,c){return '<span class="chip '+c+'">'+ICON[i]+'</span>'}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function nome(){return A.nome?esc(A.nome.split(' ')[0]):''}
+
+/* ===== Etapas ===== */
+var steps=[
+ {key:'oferta',label:'1ª tela - oferta',type:'oferta',render:rOferta},
+ {key:'nome',label:'2ª tela - nome',type:'texto',render:rNome},
+ {key:'nicho',label:'3ª tela - nicho',type:'pergunta',q:function(){return nome()+', qual é o ramo da sua empresa?'},
+   opts:[['Construção e reformas','pen','c1'],['Saúde e clínicas','target','c4'],['Advocacia e contabilidade','doc','c3'],['Serviços em geral','bolt','c2'],['Comércio e lojas','img','c1'],['Outro ramo','half','c3']]},
+ {key:'situacao',label:'4ª tela - situação do site',type:'pergunta',q:function(){return 'Como está o site da sua empresa hoje?'},
+   opts:[['Não tenho site','x','c4'],['Tenho, mas não aparece no Google','search','c2'],['Tenho, mas não gera clientes','chart','c1']]},
+ {key:'whatsapp',label:'5ª tela - whatsapp',type:'contato',render:rZap},
+ {key:'prontidao',label:'6ª tela - material pronto',type:'pergunta',q:function(){return 'Você já tem logo e fotos da empresa?'},sub:'Isso define se conseguimos entregar em 48h.',
+   opts:[['Sim, tenho logo e fotos','check','c3'],['Tenho só o logo','half','c2'],['Ainda não tenho nada','clock','c1']]},
+ {key:'trafego',label:'7ª tela - interesse tráfego',type:'pergunta',q:function(){return 'Depois do site, quer receber clientes também por anúncio?'},
+   opts:[['Sim, quero site + anúncios','bolt','c2'],['Primeiro só o site','pen','c1']]},
+ {key:'loading',label:'8ª tela - analisando',type:'loading',render:rLoading},
+ {key:'resultado',label:'9ª tela - resultado',type:'resultado',render:rResultado}
+];
+var idx=0,main=document.getElementById('main'),pg=document.getElementById('pg'),app=document.getElementById('app');
+
+function track(s,extra){
+  var p={session_id:SID,step_index:steps.indexOf(s)+1,step_total:steps.length,step_label:s.label,step_type:s.type,origem:CFG.FUNIL,
+         respostas_ate_aqui:JSON.stringify(A)};
+  if(extra)for(var k in extra)p[k]=extra[k];
+  if(!CFG.STEP_URL)return;
+  try{fetch(CFG.STEP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p),keepalive:true}).catch(function(){})}catch(e){}
+}
+function goTo(i){
+  idx=i;var s=steps[i];
+  app.className=(s.type==='oferta'||s.type==='resultado'||s.type==='loading')?'hide-bar':'';
+  pg.style.width=Math.min(100,Math.round(((i+0.4)/(steps.length-2))*100))+'%';
+  main.style.animation='none';void main.offsetWidth;main.style.animation='';
+  (s.render||rPergunta)(s);
+  track(s);
+  try{window.scrollTo(0,0)}catch(e){}
+}
+function next(){goTo(idx+1)}
+
+/* ===== Renders ===== */
+function rOferta(){
+  main.innerHTML=
+  '<h1>Tenha seu site publicado <span class="g">em até 48h</span></h1>'+
+  '<div class="card"><div>'+
+    '<div class="price-l">Por apenas</div>'+
+    '<div class="price"><small>R$</small>550</div>'+
+    '<div class="hint">Responda 5 perguntas rápidas e peça o seu ↓</div>'+
+    '<div class="pills">'+
+      '<div class="pill">'+chip('pen','c1')+'Design profissional</div>'+
+      '<div class="pill">'+chip('doc','c2')+'Textos que vendem seu serviço</div>'+
+      '<div class="pill">'+chip('phone','c3')+'Funciona perfeito no celular</div>'+
+      '<div class="pill">'+chip('search','c4')+'Pronto para aparecer no Google</div>'+
+    '</div>'+
+  '</div></div>'+
+  '<button class="btn" id="go">Quero meu site em 48h <span>→</span></button>'+
+  '<div class="safe"><span>Sem compromisso</span><span>Leva 1 minuto</span></div>';
+  document.getElementById('go').onclick=function(){ev('ViewContent');next()};
+}
+function rNome(){
+  main.innerHTML='<h2>Como posso te chamar?</h2><p class="sub">Vamos montar o pedido do seu site.</p>'+
+  '<input class="f" id="i" type="text" placeholder="Seu nome" autocomplete="given-name" maxlength="60">'+
+  '<div class="err" id="e"></div><button class="btn" id="b" style="margin-top:6px">Continuar <span>→</span></button>';
+  var i=document.getElementById('i'),b=document.getElementById('b');
+  function ok(){var v=i.value.trim();if(v.length<2){document.getElementById('e').textContent='Digite seu nome para continuar.';return}
+    A.nome=v;next()}
+  b.onclick=ok;i.addEventListener('keydown',function(e){if(e.key==='Enter')ok()});setTimeout(function(){i.focus()},350);
+}
+function rPergunta(s){
+  var h='<h2>'+s.q()+'</h2>'+(s.sub?'<p class="sub">'+s.sub+'</p>':'<p class="sub" style="margin-bottom:14px">Toque na opção que mais combina.</p>')+'<div class="opts">';
+  s.opts.forEach(function(o,n){h+='<button class="opt" data-n="'+n+'">'+chip(o[1],o[2])+'<span>'+o[0]+'</span></button>'});
+  main.innerHTML=h+'</div>';
+  main.querySelectorAll('.opt').forEach(function(el){el.onclick=function(){
+    el.classList.add('sel');A[s.key]=s.opts[+el.dataset.n][0];setTimeout(next,220)}});
+}
+function maskZap(v){v=v.replace(/\D/g,'').slice(0,11);
+  if(v.length>6)return '('+v.slice(0,2)+') '+v.slice(2,v.length-4)+'-'+v.slice(-4);
+  if(v.length>2)return '('+v.slice(0,2)+') '+v.slice(2);return v}
+function rZap(){
+  main.innerHTML='<h2>'+nome()+', qual seu WhatsApp?</h2><p class="sub">Enviamos seu pedido e o próximo passo por lá.</p>'+
+  '<input class="f" id="i" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" autocomplete="tel-national">'+
+  '<div class="err" id="e"></div><button class="btn" id="b" style="margin-top:6px">Continuar <span>→</span></button>'+
+  '<div class="safe"><span>Não enviamos spam</span><span>Só para falar do seu site</span></div>';
+  var i=document.getElementById('i'),b=document.getElementById('b');
+  i.oninput=function(){i.value=maskZap(i.value)};
+  function ok(){var d=i.value.replace(/\D/g,'');
+    if(d.length<10||d.length>11||/^(\d)\1+$/.test(d)||+d.slice(0,2)<11){document.getElementById('e').textContent='Confira o número com DDD.';return}
+    A.whatsapp='55'+d;b.disabled=true;sendLead();ev('Lead');next()}
+  b.onclick=ok;i.addEventListener('keydown',function(e){if(e.key==='Enter')ok()});setTimeout(function(){i.focus()},350);
+}
+function sendLead(){
+  var p={session_id:SID,funil:CFG.FUNIL,nome:A.nome,whatsapp:A.whatsapp,nicho:A.nicho,situacao:A.situacao,origem:ORIGEM,utms:UTMS,url:location.href};
+  try{fetch(CFG.LEAD_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p),keepalive:true}).catch(function(){})}catch(e){}
+}
+function rLoading(){
+  main.innerHTML='<div class="ld"><div class="spin"></div><h2>Montando o pedido do seu site...</h2><p class="sub">Cruzando suas respostas com o que funciona no seu ramo.</p></div>';
+  setTimeout(next,1700);
+}
+var DIAG={
+ 'Não tenho site':'Hoje seus clientes não encontram sua empresa quando pesquisam. Um site no ar muda isso.',
+ 'Tenho, mas não aparece no Google':'Seu site existe, mas não está estruturado para ser encontrado por quem busca seu serviço.',
+ 'Tenho, mas não gera clientes':'Seu site está no ar, mas não leva o visitante a pedir orçamento. Falta estrutura de conversão.'
+};
+function rResultado(s){
+  ev('CompleteRegistration');
+  var q=A.situacao||'Não tenho site';
+  var msg='Olá! Sou '+A.nome+' e acabei de pedir meu site em 48h. Ramo: '+(A.nicho||'-')+'. Situação: '+q+'. Material: '+(A.prontidao||'-')+'.';
+  var wa='https://wa.me/'+CFG.WHATS+'?text='+encodeURIComponent(msg);
+  main.innerHTML='<div class="center"><span class="tag">Pedido registrado</span></div>'+
+  '<h2>'+nome()+', seu site entra <span class="g">na fila de 48h</span></h2>'+
+  '<p class="sub">'+DIAG[q]+'</p>'+
+  '<div class="card"><div><div class="price-l">Investimento</div><div class="price"><small>R$</small>550</div>'+
+   '<div class="steps">'+
+    '<div class="pill">'+chip('phone','c3')+'1. Você chama no WhatsApp</div>'+
+    '<div class="pill">'+chip('img','c1')+'2. Envia logo e fotos</div>'+
+    '<div class="pill">'+chip('bolt','c2')+'3. Site publicado em até 48h</div>'+
+   '</div></div></div>'+
+  '<a class="btn" id="wa" href="'+wa+'" style="text-decoration:none">Falar no WhatsApp e iniciar meu site <span>→</span></a>';
+  document.getElementById('wa').addEventListener('click',function(){
+    ev('Contact');track(s,{step_label:'Clicou WhatsApp',step_type:'whatsapp_click'})});
+}
+goTo(0);
+</script>
+</body>
+</html>
