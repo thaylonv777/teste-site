@@ -327,25 +327,22 @@ function renderTabs(){
 
 function fetchFonte(f){
   if(f.type !== "funnel" && f.type !== "ads") return Promise.resolve(null);
-  var key = f.id;
+  // sessões/eventos de funil e métricas de anúncio seguem o MESMO período selecionado,
+  // por isso ambos têm cache por período (não só o ads).
+  var periodo = periodRange(adsPeriod);
+  var key = (f.type === "ads" ? "ads_" : (f.id+"_")) + adsPeriod;
   var url = f.statsUrl;
-  if(f.type === "ads"){
-    var r = periodRange(adsPeriod);
-    key = "ads_" + adsPeriod;
-    if(r.since) url += (url.indexOf("?")>=0?"&":"?") + "since=" + r.since + "&until=" + r.until;
-  }
+  if(periodo.since) url += (url.indexOf("?")>=0?"&":"?") + "since=" + periodo.since + "&until=" + periodo.until;
   if(cache[key]) return Promise.resolve(cache[key]);
-  return fetch(url).then(function(r){ return r.json(); }).then(function(d){ cache[key]=d; return d; }).catch(function(){ return null; });
+  return fetch(url).then(function(resp){ return resp.json(); }).then(function(d){ cache[key]=d; return d; }).catch(function(){ return null; });
 }
 
 function setAdsPeriod(p){
   if(p === adsPeriod) return;
   adsPeriod = p;
   try{ localStorage.setItem("painel_ads_period", p); }catch(e){}
-  var fonte = FONTES.filter(function(f){ return f.id==="ads"; })[0];
-  if(cache["ads_"+adsPeriod]){ draw(); return; }
   document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
-  fetchFonte(fonte).then(function(){ draw(); });
+  loadAll().then(function(){ draw(); touchRefreshLabel(); });
 }
 
 function loadAll(){
@@ -376,7 +373,7 @@ function viewGeral(){
   var funis = FONTES.filter(function(f){ return f.type==="funnel"; });
   var totalSessions = 0, totalEventos = 0, totalGasto = 0;
   var rows = funis.map(function(f){
-    var d = cache[f.id];
+    var d = cache[f.id+"_"+adsPeriod];
     var sessions = d ? (d.total_sessions||0) : 0;
     var eventos = d ? (d.total_eventos||0) : 0;
     var conv = convRate(d);
@@ -582,15 +579,21 @@ function bindPeriodButtons(){
 }
 
 function viewFunil(f){
-  var data = cache[f.id];
+  var periodo = periodRange(adsPeriod);
+  var periodsHtml = '<div class="period-bar">' +
+    [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
+      return '<button class="period-btn'+(adsPeriod===p[0]?" on":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>';
+    }).join('') + '</div>';
+  var data = cache[f.id+"_"+adsPeriod];
   if(!data){
-    document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
+    document.getElementById("view").innerHTML = periodsHtml + '<div class="empty">Carregando...</div>';
+    bindPeriodButtons();
     return;
   }
   var steps = data.steps||[];
   var totalStart = data.total_sessions||0;
   var conv = convRate(data);
-  var html = '<div class="cards">'+
+  var html = periodsHtml + '<div class="cards">'+
     '<div class="card"><div class="n">'+totalStart+'</div><div class="l">Sessões iniciadas</div></div>'+
     '<div class="card"><div class="n">'+(data.total_eventos||0)+'</div><div class="l">Eventos registrados</div></div>'+
     '<div class="card"><div class="n">'+conv+'%</div><div class="l">Chegou até a última etapa</div></div>'+
@@ -618,6 +621,7 @@ function viewFunil(f){
   html += '<div class="section-title" style="margin-top:34px">Sessões recentes</div><div class="sessions" id="sessions"></div>';
   html += '<div class="updated">Atualizado em '+new Date(data.generated_at||Date.now()).toLocaleString("pt-BR")+'</div>';
   document.getElementById("view").innerHTML = html;
+  bindPeriodButtons();
 
   var sess = document.getElementById("sessions");
   var list = data.sessions||[];
