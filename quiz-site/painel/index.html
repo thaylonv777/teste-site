@@ -345,7 +345,10 @@ function viewGeral(){
   var periodo = periodRange(adsPeriod);
   var adsData = cache["ads_"+adsPeriod];
   var byProject = (adsData && adsData.by_project) || {};
+  var byCampaign = (adsData && adsData.by_campaign) || [];
   var OBJ_LABEL = { compra:"Compra", lead:"Lead" };
+  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
+  var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", outros:"#8E7CC3" };
 
   var periodsHtml = '<div class="period-bar">' +
     [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
@@ -395,6 +398,36 @@ function viewGeral(){
       return '<div class="cmp-row" style="cursor:default;opacity:.55"><div class="cmp-top"><div class="cmp-left"><span class="d" style="background:#555"></span><b>'+esc(f.label)+'</b></div>'+
         '<div class="cmp-right"><span>em breve</span></div></div></div>';
     }).join("");
+  }
+  html += '</div>';
+
+  html += '<div class="section-title">Campanhas — '+esc(periodo.label)+'</div><div class="camp-list">';
+  if(!byCampaign.length){
+    html += '<div class="empty">Nenhuma campanha com dados nesse período.</div>';
+  } else {
+    byCampaign.forEach(function(c){
+      var objetivo = c.objetivo || 'lead';
+      var cor = CORES[c.projeto]||'#8E7CC3';
+      html += '<div class="camp-card" style="border-left-color:'+cor+'">'+
+        '<div class="camp-head"><span class="camp-badge" style="background:'+cor+'33;color:'+cor+'">'+esc(NOMES[c.projeto]||c.projeto)+'</span>'+
+        '<span class="camp-name">'+esc(c.campaign_name)+'</span></div>'+
+        '<div class="camp-top"><div class="camp-spend">'+brl(c.spend)+'</div>'+
+        '<div class="camp-sub">'+c.clicks+' cliques · CPC '+brl(c.cpc)+' · CTR '+c.ctr+'%</div></div>'+
+        '<div class="stat-grid">'+
+          '<div>Resultados ('+OBJ_LABEL[objetivo]+') <b>'+c.resultados+'</b></div>'+
+          '<div>Custo/resultado <b>'+brl(c.custo_por_resultado)+'</b></div>'+
+          (objetivo==='compra'
+            ? '<div>Valor compra <b>'+brl(c.purchase_value)+'</b></div><div>ROAS <b>'+c.roas+'x</b></div>'
+            : '<div>Custo/lead <b>'+brl(c.custo_por_lead)+'</b></div><div>Leads <b>'+c.leads+'</b></div>'
+          )+
+          '<div>Checkout iniciado <b>'+c.initiate_checkout+'</b></div>'+
+          '<div>Custo/checkout <b>'+brl(c.custo_por_checkout)+'</b></div>'+
+          '<div>CPM <b>'+brl(c.cpm)+'</b></div>'+
+          '<div>Alcance <b>'+c.reach+'</b></div>'+
+          '<div>Frequência <b>'+c.frequency+'</b></div>'+
+          '<div>LP views <b>'+c.landing_page_views+'</b></div>'+
+        '</div></div>';
+    });
   }
   html += '</div>';
 
