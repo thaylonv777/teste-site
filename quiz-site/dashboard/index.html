@@ -3,174 +3,189 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard · Quiz Site</title>
+<title>Dashboard — Quiz Site</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315191F'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%2351B5BB'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0A0A0B">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 :root{
-  --navy:#15191f; --navy2:#1c222b; --teal:#51b5bb; --teal-d:#3d8d92;
-  --ink:#eef1f3; --ink-dim:#9aa5ac; --line:rgba(255,255,255,.08);
-  --serif:'Instrument Serif',serif; --sans:'Schibsted Grotesk',system-ui,sans-serif;
-  --ok:#6fd0a0; --warn:#e0b65c;
+  --bg:#0A0A0B; --surface:#111113; --surface2:#17171a; --line:rgba(81,181,187,.18);
+  --fg:#F3EEE4; --muted:rgba(243,238,228,.62);
+  --gold:#51B5BB; --gold-l:#8ED3D7; --gold-deep:#2F8488;
+  --r:16px; --rs:11px; --maxw:860px;
 }
-*{box-sizing:border-box;min-width:0}
-html{overflow-x:hidden}
-body{margin:0;background:var(--navy);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;width:100%}
-header{padding:20px 16px 16px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-h1{font-family:var(--serif);font-weight:400;font-size:clamp(20px,6vw,28px);margin:0;letter-spacing:.2px}
-h1 em{color:var(--teal);font-style:normal}
-.sub{color:var(--ink-dim);font-size:13px;margin-top:4px}
-.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.filters input{background:var(--navy2);border:1px solid var(--line);color:var(--ink);padding:8px 10px;border-radius:8px;font-family:var(--sans);font-size:13px;max-width:140px}
-.filters button{background:var(--teal);color:#07262a;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer}
-.filters button:hover{background:#63c3c9}
-main{max-width:1180px;margin:0 auto;padding:16px;width:100%}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
-.card{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
-.card .n{font-family:var(--serif);font-size:clamp(24px,7vw,34px);color:var(--teal)}
-.card .l{color:var(--ink-dim);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
-section{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;max-width:100%;overflow:hidden}
-section h2{font-family:var(--serif);font-weight:400;font-size:18px;margin:0 0 12px}
-.step{display:grid;grid-template-columns:20px 1fr 34px 46px;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
-.step:last-child{border-bottom:none}
-.step .idx{color:var(--ink-dim)}
-.step .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.step .bar{display:none}
-.step .pct{text-align:right;color:var(--ink-dim);white-space:nowrap}
-@media(min-width:620px){
-  .step{grid-template-columns:28px 1fr 50px 60px 140px}
-  .step .bar{display:block;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
-}
-.step .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal-d),var(--teal))}
-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-th{text-align:left;color:var(--ink-dim);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.04em;padding:7px 6px;border-bottom:1px solid var(--line)}
-td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-tr.sess{cursor:pointer}
-tr.sess:hover{background:rgba(255,255,255,.03)}
-.tag{display:inline-block;background:rgba(81,181,187,.14);color:var(--teal);border-radius:6px;padding:2px 7px;font-size:10px;white-space:nowrap}
-.src{display:inline-block;font-size:10px;font-weight:700;border-radius:999px;padding:2px 8px;color:#fff;white-space:nowrap}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui,-apple-system,sans-serif;
+  padding:28px 16px 60px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.brand b{font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  background:linear-gradient(110deg,#C7ECEE 0%,#51B5BB 55%,#2F8488 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);font-size:13px}
+.refresh{background:var(--surface);border:1px solid var(--line);color:var(--gold-l);font-size:13px;font-weight:600;
+  padding:9px 16px;border-radius:999px;cursor:pointer}
+.refresh:hover{border-color:var(--gold)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:26px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:16px}
+.card .n{font-size:26px;font-weight:800;color:var(--gold-l)}
+.card .l{font-size:12px;color:var(--muted);margin-top:2px}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+.funnel{display:flex;flex-direction:column;gap:10px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:14px 16px;position:relative;overflow:hidden}
+.step .bar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(81,181,187,.22),rgba(81,181,187,.06));z-index:0}
+.step-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.step-left{display:flex;align-items:center;gap:12px;min-width:0}
+.step-idx{font-weight:800;color:var(--gold);font-size:13px;flex:none;width:26px}
+.step-label{font-size:13.5px;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}
+.step-right{display:flex;align-items:center;gap:16px;flex:none}
+.step-n{font-weight:700;font-size:15px}
+.step-pct{font-size:12px;color:var(--muted);min-width:46px;text-align:right}
+.drop{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(239,68,68,.12);color:#f87171;font-weight:600}
+.drop.ok{background:rgba(74,222,128,.12);color:#4ade80}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:40px 0}
+.updated{color:var(--muted);font-size:11.5px;margin-top:18px;text-align:center}
+.sessions{display:flex;flex-direction:column;gap:8px;margin-top:34px}
+.sess{background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px;cursor:pointer}
+.sess-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sess-id{font-size:11px;color:var(--muted);font-family:monospace}
+.sess-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:1 1 auto;min-width:0}
+.sess-step{font-size:12px;color:var(--gold-l);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sess-nicho,.sess-count,.sess-caret,.sess-id{flex:none}
+.sess-count{font-size:11px;color:var(--muted)}
+.sess-caret{color:var(--gold);font-size:11px;transition:.15s}
+.sess.open .sess-caret{transform:rotate(90deg)}
+.sess-answers{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--fg)}
+.sess.open .sess-answers{display:block}
+.ans-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.ans-row:last-child{border-bottom:none}
+.ans-q{color:var(--muted);flex:1}
+.ans-a{color:var(--gold-l);font-weight:600;text-align:right;flex:none;max-width:50%}
+.ans-empty{color:var(--muted);font-size:12px}
+.sess-when{flex:none;font-size:12.5px;font-weight:600;color:var(--fg);white-space:nowrap}
+.sess-src{flex:none;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;color:#fff}
 .src-tt{background:#111;box-shadow:inset 0 0 0 1px #25F4EE,2px 0 0 #FE2C55}
 .src-meta{background:#0866FF}
 .src-other{background:#3A3F4B}
-.detail{display:none;background:rgba(0,0,0,.18)}
-.detail td{white-space:normal}
-.detail pre{margin:0;padding:10px;font-size:11px;color:var(--ink-dim);white-space:pre-wrap;word-break:break-word;max-width:100%;overflow-x:auto}
-.empty{color:var(--ink-dim);font-size:13px;padding:20px 0;text-align:center}
-.loading{color:var(--ink-dim);font-size:13px}
-@media(max-width:480px){
-  table,thead,tbody,th,td,tr{display:block}
-  thead{display:none}
-  tr.sess{border-bottom:1px solid var(--line);padding:8px 0}
-  td{border-bottom:none;padding:2px 0;white-space:normal}
-  td:before{content:attr(data-l);color:var(--ink-dim);font-size:10px;text-transform:uppercase;display:block}
-}
+.sess-nicho{font-size:11px;font-weight:700;color:#07262a;background:var(--gold);border-radius:999px;padding:2px 8px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Dashboard <em>quiz · site</em></h1>
-    <div class="sub">Funil de geração de leads — venda de site</div>
-  </div>
-  <div class="filters">
-    <input type="date" id="since">
-    <input type="date" id="until">
-    <button id="apply">Filtrar</button>
-  </div>
-</header>
-<main>
-  <div class="cards" id="cards">
-    <div class="card"><div class="n" id="cTotal">–</div><div class="l">Sessões iniciadas</div></div>
-    <div class="card"><div class="n" id="cEventos">–</div><div class="l">Eventos registrados</div></div>
-    <div class="card"><div class="n" id="cFinal">–</div><div class="l">% chegou na última etapa</div></div>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <div class="brand"><span class="dot"></span><b>Quiz Site</b></div>
+      <div class="sub">Funil de geração de leads — venda de site</div>
+    </div>
+    <button class="refresh" id="btnRefresh">↻ Atualizar</button>
   </div>
 
-  <section>
-    <h2>Funil por etapa</h2>
-    <div id="steps" class="loading">Carregando…</div>
-  </section>
+  <div class="cards" id="cards"></div>
 
-  <section>
-    <h2>Sessões recentes</h2>
-    <div id="sessionsWrap" class="loading">Carregando…</div>
-  </section>
-</main>
+  <div class="section-title">Etapas do funil</div>
+  <div class="funnel" id="funnel"><div class="empty">Carregando...</div></div>
+
+  <div class="section-title" style="margin-top:34px">Sessões recentes</div>
+  <div class="sessions" id="sessions"></div>
+
+  <div class="updated" id="updated"></div>
+</div>
 
 <script>
-var CFG = { STATS_URL: 'https://n8n.manuai.com.br/webhook/funil-site-stats' };
-
-function fmtDate(iso){
-  if(!iso) return '–';
-  var d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-
-function render(data){
-  document.getElementById('cTotal').textContent = data.total_sessions || 0;
-  document.getElementById('cEventos').textContent = data.total_eventos || 0;
-  var steps = data.steps || [];
-  var last = steps.length ? steps[steps.length-1] : null;
-  document.getElementById('cFinal').textContent = last ? last.pct_of_start + '%' : '–';
-
-  var stepsEl = document.getElementById('steps');
-  if(!steps.length){
-    stepsEl.innerHTML = '<div class="empty">Sem dados no período.</div>';
-  } else {
-    stepsEl.innerHTML = steps.map(function(s){
-      var vsCls = s.pct_vs_prev >= 90 ? 'up' : (s.pct_vs_prev < 60 ? 'down' : '');
-      return '<div class="step">' +
-        '<div class="idx">'+(s.step_index+1)+'</div>' +
-        '<div class="lbl">'+(s.step_label||'')+'</div>' +
-        '<div class="pct">'+s.sessions+'</div>' +
-        '<div class="pct">'+s.pct_of_start+'%</div>' +
-        '<div class="bar"><i style="width:'+s.pct_of_start+'%"></i></div>' +
-      '</div>';
-    }).join('');
-  }
-
-  var sessions = data.sessions || [];
-  var wrap = document.getElementById('sessionsWrap');
-  if(!sessions.length){
-    wrap.innerHTML = '<div class="empty">Nenhuma sessão no período.</div>';
-    return;
-  }
-  var rows = sessions.map(function(s, i){
-    var r = s.respostas || {};
-    var origem = String(r.origem||'');
-    var origemHtml = origem
-      ? '<span class="src '+(origem==='tiktok'?'src-tt':origem==='meta'?'src-meta':'src-other')+'">'+
-          (origem==='tiktok'?'TikTok':origem==='meta'?'Meta':origem)+'</span>'
-      : '–';
-    return '<tr class="sess" data-i="'+i+'">' +
-      '<td data-l="Nome">'+(r.nome||'–')+'</td>' +
-      '<td data-l="WhatsApp">'+(r.whatsapp||'–')+'</td>' +
-      '<td data-l="Nicho">'+(r.nicho||'–')+'</td>' +
-      '<td data-l="Origem">'+origemHtml+'</td>' +
-      '<td data-l="Chegou até"><span class="tag">'+(s.step_label||'etapa '+(s.step_index+1))+'</span></td>' +
-      '<td data-l="Atualizado">'+fmtDate(s.updated_at)+'</td>' +
-    '</tr>' +
-    '<tr class="detail" id="d'+i+'"><td colspan="6"><pre>'+JSON.stringify(r,null,2)+'</pre></td></tr>';
-  }).join('');
-  wrap.innerHTML = '<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Nicho</th><th>Origem</th><th>Chegou até</th><th>Atualizado</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  wrap.querySelectorAll('tr.sess').forEach(function(tr){
-    tr.addEventListener('click', function(){
-      var d = document.getElementById('d'+tr.dataset.i);
-      d.style.display = d.style.display === 'table-row' ? 'none' : 'table-row';
-    });
-  });
-}
+var STATS_URL = "https://n8n.manuai.com.br/webhook/funil-site-stats";
 
 function load(){
-  var since = document.getElementById('since').value;
-  var until = document.getElementById('until').value;
-  var url = CFG.STATS_URL + '?since=' + encodeURIComponent(since||'') + '&until=' + encodeURIComponent(until||'');
-  document.getElementById('steps').innerHTML = '<div class="loading">Carregando…</div>';
-  document.getElementById('sessionsWrap').innerHTML = '<div class="loading">Carregando…</div>';
-  fetch(url).then(function(r){return r.json()}).then(render).catch(function(e){
-    document.getElementById('steps').innerHTML = '<div class="empty">Erro ao carregar dados.</div>';
+  document.getElementById("funnel").innerHTML = '<div class="empty">Carregando...</div>';
+  fetch(STATS_URL).then(function(r){ return r.json(); }).then(render).catch(function(e){
+    document.getElementById("funnel").innerHTML = '<div class="empty">Erro ao carregar dados: '+(e&&e.message||e)+'</div>';
   });
 }
-document.getElementById('apply').addEventListener('click', load);
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function render(data){
+  var steps = data.steps||[];
+  var cards = document.getElementById("cards");
+  var totalStart = data.total_sessions||0;
+  var lastStep = steps.length? steps[steps.length-1] : null;
+  var convRate = (totalStart && lastStep) ? Math.round((lastStep.sessions/totalStart)*1000)/10 : 0;
+  cards.innerHTML =
+    '<div class="card"><div class="n">'+totalStart+'</div><div class="l">Sessões iniciadas</div></div>'+
+    '<div class="card"><div class="n">'+(data.total_eventos||0)+'</div><div class="l">Eventos registrados</div></div>'+
+    '<div class="card"><div class="n">'+convRate+'%</div><div class="l">Chegou até a última etapa</div></div>';
+
+  var f = document.getElementById("funnel");
+  if(!steps.length){
+    f.innerHTML = '<div class="empty">Sem dados ainda.</div>';
+    document.getElementById("sessions").innerHTML = "";
+    return;
+  }
+  var html = "";
+  steps.forEach(function(s,i){
+    var dropClass = s.pct_vs_prev>=70 ? "ok" : "";
+    html += '<div class="step"><div class="bar" style="width:'+s.pct_of_start+'%"></div>'+
+      '<div class="step-content">'+
+        '<div class="step-left"><span class="step-idx">'+(i+1)+'</span><span class="step-label">'+esc(s.step_label)+'</span></div>'+
+        '<div class="step-right">'+
+          (i>0?'<span class="drop '+dropClass+'">'+s.pct_vs_prev+'% vs anterior</span>':'')+
+          '<span class="step-pct">'+s.pct_of_start+'%</span>'+
+          '<span class="step-n">'+s.sessions+'</span>'+
+        '</div>'+
+      '</div></div>';
+  });
+  f.innerHTML = html;
+
+  var sess = document.getElementById("sessions");
+  var list = data.sessions||[];
+  if(!list.length){
+    sess.innerHTML = '<div class="empty">Nenhuma sessão registrada ainda.</div>';
+  }else{
+    sess.innerHTML = list.map(function(s,i){
+      var qas = Object.keys(s.respostas||{}).filter(function(k){ return k !== "origem"; });
+      var nicho = (s.respostas||{}).nicho;
+      var origem = String((s.respostas||{}).origem||"");
+      var origemHtml = origem
+        ? '<span class="sess-src '+(origem==="tiktok"?"src-tt":origem==="meta"?"src-meta":"src-other")+'">'+
+            esc(origem==="tiktok"?"TikTok":origem==="meta"?"Meta":origem)+'</span>'
+        : '';
+      var answersHtml = qas.length
+        ? qas.map(function(q){ return '<div class="ans-row"><span class="ans-q">'+esc(q)+'</span><span class="ans-a">'+esc(s.respostas[q])+'</span></div>'; }).join("")
+        : '<div class="ans-empty">Nenhuma pergunta respondida ainda (abandonou antes).</div>';
+      var when = s.updated_at ? new Date(s.updated_at).toLocaleString("pt-BR") : "";
+      var whenShort = "";
+      if(s.updated_at){
+        var d = new Date(s.updated_at), mins = Math.floor((Date.now()-d.getTime())/60000);
+        var hhmm = d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+        var rel = mins < 1 ? "agora" : mins < 60 ? "há "+mins+" min" : mins < 1440 ? "há "+Math.floor(mins/60)+" h" : d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+        whenShort = hhmm+" · "+rel;
+      }
+      return '<div class="sess" data-i="'+i+'">'+
+        '<div class="sess-head">'+
+          '<span class="sess-when">'+esc(whenShort)+'</span>'+
+          '<div class="sess-right">'+
+            origemHtml+
+            (nicho ? '<span class="sess-nicho">'+esc(nicho)+'</span>' : '')+
+            '<span class="sess-step">'+esc(s.step_label)+'</span>'+
+            '<span class="sess-count">'+qas.length+' resp.</span>'+
+            '<span class="sess-caret">▸</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="sess-answers">'+answersHtml+(when?'<div class="ans-row"><span class="ans-q">Última atividade</span><span class="ans-a">'+esc(when)+'</span></div>':'')+
+          '<div class="ans-row"><span class="ans-q">Sessão</span><span class="ans-a">'+esc(s.session_id)+'</span></div></div>'+
+      '</div>';
+    }).join("");
+    sess.querySelectorAll(".sess").forEach(function(el){
+      el.onclick = function(){ el.classList.toggle("open"); };
+    });
+  }
+
+  document.getElementById("updated").textContent = "Atualizado em " + new Date(data.generated_at||Date.now()).toLocaleString("pt-BR");
+}
+
+document.getElementById("btnRefresh").onclick = load;
 load();
 </script>
 </body>
