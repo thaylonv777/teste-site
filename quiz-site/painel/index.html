@@ -55,6 +55,12 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .period-btn{background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12.5px;font-weight:600;
   padding:7px 14px;border-radius:999px;cursor:pointer;font-family:inherit}
 .period-btn.on{color:#07181a;background:var(--accent-l);border-color:var(--accent-l)}
+.toggle-bar{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.toggle-btn{background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:600;
+  padding:6px 13px;border-radius:999px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.toggle-btn::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.toggle-btn.on{color:var(--accent-l);border-color:var(--accent)}
+.toggle-btn.on::before{background:var(--accent-l)}
 .camp-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 .camp-card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)),var(--surface);
   border:1px solid var(--line);border-left:3px solid #8E7CC3;border-radius:var(--rs);padding:16px;
@@ -243,6 +249,8 @@ var FONTES = [
 var cache = {}; // id -> data
 var active = "geral";
 var adsPeriod = "hoje"; // hoje | 3d | 7d | 30d | total
+var filtroAtivas = false;
+var filtroVeiculacao = false;
 
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function brl(v){ return 'R$ '+(Number(v||0)).toFixed(2); }
@@ -412,15 +420,24 @@ function viewGeral(){
   html += '</div>';
 
   html += '<div class="section-title">Campanhas — '+esc(periodo.label)+'</div>';
-  if(!byCampaign.length){
-    html += '<div class="empty">Nenhuma campanha com dados nesse período.</div>';
+  html += '<div class="toggle-bar">'+
+    '<button class="toggle-btn'+(filtroAtivas?' on':'')+'" id="toggleAtivas">Somente ativas</button>'+
+    '<button class="toggle-btn'+(filtroVeiculacao?' on':'')+'" id="toggleVeiculacao">Somente com veiculação</button>'+
+  '</div>';
+  var campFiltradas = byCampaign.filter(function(c){
+    if(filtroAtivas && c.effective_status !== 'ACTIVE') return false;
+    if(filtroVeiculacao && !(c.impressions>0 || c.spend>0)) return false;
+    return true;
+  });
+  if(!campFiltradas.length){
+    html += '<div class="empty">Nenhuma campanha '+(byCampaign.length?'com esse filtro':'com dados')+' nesse período.</div>';
   } else {
     html += '<div class="camp-table-wrap"><table class="camp-table"><thead><tr>'+
       '<th>Campanha</th><th>Alcance</th><th>Valor gasto</th><th>Resultado</th><th>Custo/resultado</th>'+
       '<th>Checkout</th><th>Custo/checkout</th><th>Cliques no link</th><th>Custo/clique no link</th>'+
       '<th>CTR clique no link</th><th>Visualização de página de destino</th><th>CPM</th>'+
       '</tr></thead><tbody>';
-    byCampaign.forEach(function(c){
+    campFiltradas.forEach(function(c){
       var objetivo = c.objetivo || 'lead';
       var cor = CORES[c.projeto]||'#8E7CC3';
       html += '<tr>'+
@@ -446,6 +463,10 @@ function viewGeral(){
   document.querySelectorAll(".cmp-row[data-id]").forEach(function(el){
     el.onclick = function(){ active = el.getAttribute("data-id"); draw(); };
   });
+  var btnAtivas = document.getElementById("toggleAtivas");
+  var btnVeic = document.getElementById("toggleVeiculacao");
+  if(btnAtivas) btnAtivas.onclick = function(){ filtroAtivas = !filtroAtivas; draw(); };
+  if(btnVeic) btnVeic.onclick = function(){ filtroVeiculacao = !filtroVeiculacao; draw(); };
 }
 
 function viewSoon(f){
