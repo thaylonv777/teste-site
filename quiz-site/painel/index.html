@@ -100,7 +100,10 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
       <div class="brand"><span class="dot"></span><b>Painel Átrio</b></div>
       <div class="sub">Ecossistema de funis e campanhas</div>
     </div>
-    <button class="refresh" id="btnRefresh">↻ Atualizar</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="sub" id="lastRefresh"></span>
+      <button class="refresh" id="btnRefresh">↻ Atualizar</button>
+    </div>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -121,7 +124,7 @@ var FONTES = [
   { id:"site", type:"funnel", label:"Quiz · Site", color:"#51B5BB", statsUrl:"https://n8n.manuai.com.br/webhook/funil-site-stats", tagField:"nicho" },
   { id:"vgv",  type:"funnel", label:"Código VGV",  color:"#C9A45C", statsUrl:"https://n8n.manuai.com.br/webhook/funil-vgv-stats",  tagField:"preco", tagPrefix:"R$ " },
   { id:"dentista", type:"funnel", label:"Funil Dentista", color:"#D98E73", statsUrl:"https://n8n.manuai.com.br/webhook/funil-dentista-stats", tagField:"nicho" },
-  { id:"ads",     type:"soon", label:"Campanhas de anúncio" },
+  { id:"ads",     type:"ads", label:"Campanhas de anúncio", color:"#8E7CC3", statsUrl:"https://n8n.manuai.com.br/webhook/ads-stats" },
   { id:"clientes",type:"soon", label:"Clientes" }
 ];
 
@@ -142,7 +145,7 @@ function renderTabs(){
 }
 
 function fetchFonte(f){
-  if(f.type !== "funnel") return Promise.resolve(null);
+  if(f.type !== "funnel" && f.type !== "ads") return Promise.resolve(null);
   if(cache[f.id]) return Promise.resolve(cache[f.id]);
   return fetch(f.statsUrl).then(function(r){ return r.json(); }).then(function(d){ cache[f.id]=d; return d; }).catch(function(){ return null; });
 }
@@ -205,6 +208,41 @@ function viewSoon(f){
   document.getElementById("view").innerHTML =
     '<div class="section-title">'+esc(f.label)+'</div>'+
     '<div class="soon">Essa fonte ainda não está integrada ao painel.<br>Quando os dados de '+esc(f.label).toLowerCase()+' estiverem disponíveis, essa aba passa a mostrar os indicadores aqui — sem mudar o resto do painel.</div>';
+}
+
+function viewAds(f){
+  var data = cache[f.id];
+  if(!data){
+    document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
+    return;
+  }
+  var byProject = data.by_project || {};
+  var byCampaign = data.by_campaign || [];
+  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
+
+  var html = '<div class="section-title">Gasto por projeto</div><div class="cards">';
+  Object.keys(byProject).forEach(function(p){
+    var d = byProject[p];
+    html += '<div class="card"><div class="n">R$ '+d.spend.toFixed(2)+'</div><div class="l">'+esc(NOMES[p]||p)+' · '+d.clicks+' cliques · CPC R$ '+d.cpc.toFixed(2)+'</div></div>';
+  });
+  if(!Object.keys(byProject).length) html += '<div class="empty">Sem dados ainda.</div>';
+  html += '</div>';
+
+  html += '<div class="section-title">Campanhas</div><div class="sessions">';
+  if(!byCampaign.length){
+    html += '<div class="empty">Nenhuma campanha com dados nesse período.</div>';
+  } else {
+    byCampaign.forEach(function(c){
+      html += '<div class="sess" style="cursor:default">'+
+        '<div class="sess-head"><span class="sess-when">'+esc(NOMES[c.projeto]||c.projeto)+'</span>'+
+        '<div class="sess-right"><span class="sess-step">'+esc(c.campaign_name)+'</span>'+
+        '<span class="sess-count">R$ '+c.spend.toFixed(2)+' · '+c.clicks+' cliques · CPC R$ '+c.cpc.toFixed(2)+' · CTR '+c.ctr+'%</span></div></div>'+
+      '</div>';
+    });
+  }
+  html += '</div>';
+  html += '<div class="updated">Atualizado em '+new Date(data.generated_at||Date.now()).toLocaleString("pt-BR")+'</div>';
+  document.getElementById("view").innerHTML = html;
 }
 
 function viewFunil(f){
@@ -296,12 +334,17 @@ function draw(){
   var f = FONTES.filter(function(x){ return x.id===active; })[0];
   if(!f){ active="geral"; renderTabs(); viewGeral(); return; }
   if(f.type === "soon"){ viewSoon(f); return; }
+  if(f.type === "ads"){ viewAds(f); return; }
   viewFunil(f);
+}
+
+function touchRefreshLabel(){
+  document.getElementById("lastRefresh").textContent = "atualizado " + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 }
 
 function load(){
   document.getElementById("view").innerHTML = '<div class="empty">Carregando...</div>';
-  loadAll().then(draw);
+  loadAll().then(function(){ draw(); touchRefreshLabel(); });
 }
 
 document.getElementById("btnRefresh").onclick = function(){ cache = {}; load(); };
