@@ -215,7 +215,7 @@ footer p+p{margin-top:2px}
 var CFG = {
   STEP_URL : '',   // opcional: webhook de etapas (dashboard). Vazio = desligado
   LEAD_URL : 'https://n8n.manuai.com.br/webhook/funil-site-lead',
-  WHATS    : '{{NUMERO_WHATSAPP}}',          // ex: 5551999999999
+  WHATS    : '5548988055239',                // (48) 98805-5239
   META_PIXEL: '5403951239830409',            // [SITE][VENDA]
   TT_PIXEL : '{{TIKTOK_PIXEL_ID}}',
   FUNIL    : 'quiz-site'
@@ -371,7 +371,7 @@ function rOferta(){
       '<li>'+ICON.check+'Otimizado para mobile</li>'+
       '<li>'+ICON.check+'Botão direto para o seu WhatsApp</li>'+
     '</ul></div>'+
-    '<div class="cta"><div'+rv(.75)+'><button class="btn pulse" id="go" type="button">Quero meu site</button><p class="note">Leva 1 minuto. Sem compromisso.</p></div></div>');
+    '<div class="cta"><div'+rv(.75)+'><button class="btn pulse" id="go" type="button">Tenho interesse</button><p class="note">Leva 1 minuto. Sem compromisso.</p></div></div>');
   document.getElementById('go').onclick=function(){ev('ViewContent');goTo(1)};
 }
 function rNome(){
