@@ -416,25 +416,25 @@ function viewGeral(){
     html += '<div class="empty">Nenhuma campanha com dados nesse período.</div>';
   } else {
     html += '<div class="camp-table-wrap"><table class="camp-table"><thead><tr>'+
-      '<th>Campanha</th><th>Cliques</th><th>CPC</th><th>CTR</th><th>Resultados</th>'+
-      '<th>Custo/resultado</th><th>Valor gasto</th><th>Finalizações de compra</th>'+
-      '<th>Valor de conversão</th><th>Custo/finalização</th><th>ROAS</th><th>CPM</th>'+
+      '<th>Campanha</th><th>Alcance</th><th>Valor gasto</th><th>Resultado</th><th>Custo/resultado</th>'+
+      '<th>Checkout</th><th>Custo/checkout</th><th>Cliques no link</th><th>Custo/clique no link</th>'+
+      '<th>CTR clique no link</th><th>Visualização de página de destino</th><th>CPM</th>'+
       '</tr></thead><tbody>';
     byCampaign.forEach(function(c){
       var objetivo = c.objetivo || 'lead';
       var cor = CORES[c.projeto]||'#8E7CC3';
       html += '<tr>'+
         '<td><span class="camp-badge" style="background:'+cor+'33;color:'+cor+'">'+esc(NOMES[c.projeto]||c.projeto)+'</span> '+esc(c.campaign_name)+'</td>'+
+        '<td>'+c.reach+'</td>'+
+        '<td>'+brl(c.spend)+'</td>'+
+        '<td>'+c.resultados+'<br><span class="camp-sub">'+(objetivo==='compra'?'Compra':'Lead')+'</span></td>'+
+        '<td>'+brl(c.custo_por_resultado)+'</td>'+
+        '<td>'+c.initiate_checkout+'</td>'+
+        '<td>'+brl(c.custo_por_checkout)+'</td>'+
         '<td>'+c.clicks+'</td>'+
         '<td>'+brl(c.cpc)+'</td>'+
         '<td>'+c.ctr+'%</td>'+
-        '<td>'+c.resultados+'<br><span class="camp-sub">'+(objetivo==='compra'?'Compra':'Lead')+'</span></td>'+
-        '<td>'+brl(c.custo_por_resultado)+'</td>'+
-        '<td>'+brl(c.spend)+'</td>'+
-        '<td>'+(objetivo==='compra'?c.purchases:'—')+'</td>'+
-        '<td>'+(objetivo==='compra'?brl(c.purchase_value):'—')+'</td>'+
-        '<td>'+(objetivo==='compra'?brl(c.custo_por_compra):'—')+'</td>'+
-        '<td>'+(objetivo==='compra'?(c.roas+'x'):'—')+'</td>'+
+        '<td>'+c.landing_page_views+'</td>'+
         '<td>'+brl(c.cpm)+'</td>'+
       '</tr>';
     });
