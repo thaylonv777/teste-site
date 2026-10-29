@@ -465,8 +465,8 @@ function viewGeral(){
   });
   var btnAtivas = document.getElementById("toggleAtivas");
   var btnVeic = document.getElementById("toggleVeiculacao");
-  if(btnAtivas) btnAtivas.onclick = function(){ filtroAtivas = !filtroAtivas; draw(); };
-  if(btnVeic) btnVeic.onclick = function(){ filtroVeiculacao = !filtroVeiculacao; draw(); };
+  if(btnAtivas) btnAtivas.onclick = function(){ filtroAtivas = !filtroAtivas; if(filtroAtivas) filtroVeiculacao = false; draw(); };
+  if(btnVeic) btnVeic.onclick = function(){ filtroVeiculacao = !filtroVeiculacao; if(filtroVeiculacao) filtroAtivas = false; draw(); };
 }
 
 function viewSoon(f){
