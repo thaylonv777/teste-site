@@ -1,11 +1,1 @@
-{
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "seusite.atriomarketing.site" }],
-      "destination": "/quiz-site/index.html"
-    }
-  ]
-}
+{"cleanUrls": true, "trailingSlash": false}
