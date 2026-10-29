@@ -65,6 +65,16 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .camp-top{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .camp-spend{font-size:22px;font-weight:800;color:var(--accent-l)}
 .camp-sub{font-size:12px;color:var(--muted)}
+.camp-table-wrap{overflow-x:auto;margin-top:14px;border:1px solid var(--line);border-radius:var(--rs);
+  background:var(--surface);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.camp-table{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap}
+.camp-table th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;
+  letter-spacing:.03em;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.camp-table td{padding:10px 14px;border-bottom:1px solid var(--line);color:var(--fg)}
+.camp-table tbody tr:last-child td{border-bottom:none}
+.camp-table tbody tr:hover{background:rgba(255,255,255,.03)}
+.camp-table td:first-child{white-space:normal;min-width:220px}
+.camp-table .camp-sub{font-size:10.5px}
 .chart-card .ct{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
 .pie-row{display:flex;align-items:center;gap:16px}
 .pie-row svg{flex:none}
@@ -401,35 +411,35 @@ function viewGeral(){
   }
   html += '</div>';
 
-  html += '<div class="section-title">Campanhas — '+esc(periodo.label)+'</div><div class="camp-list">';
+  html += '<div class="section-title">Campanhas — '+esc(periodo.label)+'</div>';
   if(!byCampaign.length){
     html += '<div class="empty">Nenhuma campanha com dados nesse período.</div>';
   } else {
+    html += '<div class="camp-table-wrap"><table class="camp-table"><thead><tr>'+
+      '<th>Campanha</th><th>Cliques</th><th>CPC</th><th>CTR</th><th>Resultados</th>'+
+      '<th>Custo/resultado</th><th>Valor gasto</th><th>Finalizações de compra</th>'+
+      '<th>Valor de conversão</th><th>Custo/finalização</th><th>ROAS</th><th>CPM</th>'+
+      '</tr></thead><tbody>';
     byCampaign.forEach(function(c){
       var objetivo = c.objetivo || 'lead';
       var cor = CORES[c.projeto]||'#8E7CC3';
-      html += '<div class="camp-card" style="border-left-color:'+cor+'">'+
-        '<div class="camp-head"><span class="camp-badge" style="background:'+cor+'33;color:'+cor+'">'+esc(NOMES[c.projeto]||c.projeto)+'</span>'+
-        '<span class="camp-name">'+esc(c.campaign_name)+'</span></div>'+
-        '<div class="camp-top"><div class="camp-spend">'+brl(c.spend)+'</div>'+
-        '<div class="camp-sub">'+c.clicks+' cliques · CPC '+brl(c.cpc)+' · CTR '+c.ctr+'%</div></div>'+
-        '<div class="stat-grid">'+
-          '<div>Resultados ('+OBJ_LABEL[objetivo]+') <b>'+c.resultados+'</b></div>'+
-          '<div>Custo/resultado <b>'+brl(c.custo_por_resultado)+'</b></div>'+
-          (objetivo==='compra'
-            ? '<div>Valor compra <b>'+brl(c.purchase_value)+'</b></div><div>ROAS <b>'+c.roas+'x</b></div>'
-            : '<div>Custo/lead <b>'+brl(c.custo_por_lead)+'</b></div><div>Leads <b>'+c.leads+'</b></div>'
-          )+
-          '<div>Checkout iniciado <b>'+c.initiate_checkout+'</b></div>'+
-          '<div>Custo/checkout <b>'+brl(c.custo_por_checkout)+'</b></div>'+
-          '<div>CPM <b>'+brl(c.cpm)+'</b></div>'+
-          '<div>Alcance <b>'+c.reach+'</b></div>'+
-          '<div>Frequência <b>'+c.frequency+'</b></div>'+
-          '<div>LP views <b>'+c.landing_page_views+'</b></div>'+
-        '</div></div>';
+      html += '<tr>'+
+        '<td><span class="camp-badge" style="background:'+cor+'33;color:'+cor+'">'+esc(NOMES[c.projeto]||c.projeto)+'</span> '+esc(c.campaign_name)+'</td>'+
+        '<td>'+c.clicks+'</td>'+
+        '<td>'+brl(c.cpc)+'</td>'+
+        '<td>'+c.ctr+'%</td>'+
+        '<td>'+c.resultados+'<br><span class="camp-sub">'+(objetivo==='compra'?'Compra':'Lead')+'</span></td>'+
+        '<td>'+brl(c.custo_por_resultado)+'</td>'+
+        '<td>'+brl(c.spend)+'</td>'+
+        '<td>'+(objetivo==='compra'?c.purchases:'—')+'</td>'+
+        '<td>'+(objetivo==='compra'?brl(c.purchase_value):'—')+'</td>'+
+        '<td>'+(objetivo==='compra'?brl(c.custo_por_compra):'—')+'</td>'+
+        '<td>'+(objetivo==='compra'?(c.roas+'x'):'—')+'</td>'+
+        '<td>'+brl(c.cpm)+'</td>'+
+      '</tr>';
     });
+    html += '</tbody></table></div>';
   }
-  html += '</div>';
 
   document.getElementById("view").innerHTML = html;
   bindPeriodButtons();
