@@ -83,7 +83,7 @@ footer{margin-top:26px;opacity:.8;text-align:center;font-size:11.5px;line-height
 .opts .opt:nth-child(2),.pills .pill:nth-child(2){animation-delay:.06s}
 .opts .opt:nth-child(3),.pills .pill:nth-child(3){animation-delay:.12s}
 .opts .opt:nth-child(4),.pills .pill:nth-child(4){animation-delay:.18s}
-.opts .opt:nth-child(5){animation-delay:.24s}.opts .opt:nth-child(6){animation-delay:.3s}
+.opts .opt:nth-child(5),.pills .pill:nth-child(5){animation-delay:.24s}.opts .opt:nth-child(6){animation-delay:.3s}
 .card>div{box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .sub{font-weight:500}
 </style>
@@ -189,15 +189,15 @@ function next(){goTo(idx+1)}
 /* ===== Renders ===== */
 function rOferta(){
   main.innerHTML=
-  '<div class="eyebrow">Átrio Marketing</div>'+
   '<h1>Tenha um site que coloca sua empresa <span class="g">no Google</span></h1>'+
   '<div class="card"><div>'+
     '<div class="price-l" style="font-weight:800;font-size:19px">O que você recebe</div>'+
     '<div class="hint" style="margin-top:4px">Responda 5 perguntas rápidas e peça o seu ↓</div>'+
     '<div class="pills">'+
+      '<div class="pill">'+chip('doc','c3')+'Site com 3 páginas: principal, quem somos e contato</div>'+
       '<div class="pill">'+chip('search','c1')+'Site otimizado para o Google</div>'+
       '<div class="pill">'+chip('pen','c2')+'Visual profissional</div>'+
-      '<div class="pill">'+chip('phone','c3')+'Funciona no celular</div>'+
+      '<div class="pill">'+chip('phone','c3')+'Otimizado para mobile</div>'+
       '<div class="pill">'+chip('bolt','c4')+'Botão direto para o seu WhatsApp</div>'+
     '</div>'+
   '</div></div>'+
