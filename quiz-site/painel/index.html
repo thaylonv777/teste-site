@@ -22,9 +22,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .wrap{max-width:var(--maxw);margin:0 auto}
 .head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:9px}
-.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
-.brand b{font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
-  background:linear-gradient(110deg,#C7ECEE 0%,#51B5BB 55%,#2F8488 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand-logo{height:30px;width:auto;display:block;filter:invert(1)}
+.brand-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line);flex:none}
 .sub{color:var(--muted);font-size:13px}
 .refresh{background:var(--surface);border:1px solid var(--line);color:var(--accent-l);font-size:13px;font-weight:600;
   padding:9px 16px;border-radius:999px;cursor:pointer}
@@ -94,6 +93,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .cmp-right b{color:var(--fg);font-size:14px}
 .cmp-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.06);margin-top:10px;overflow:hidden}
 .cmp-bar i{display:block;height:100%}
+.cmp-ads{font-size:11.5px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.cmp-ads b{color:var(--fg)}
 
 .funnel{display:flex;flex-direction:column;gap:10px}
 .step{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)),var(--surface);
@@ -144,12 +145,13 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 <div class="wrap">
   <div class="head">
     <div>
-      <div class="brand"><span class="dot"></span><b>Painel Átrio</b></div>
+      <div class="brand"><img src="assets/logo.png" alt="Átrio Marketing & Business" class="brand-logo"></div>
       <div class="sub">Ecossistema de funis e campanhas</div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
       <span class="sub" id="lastRefresh"></span>
       <button class="refresh" id="btnRefresh">↻ Atualizar</button>
+      <img src="assets/avatar.jpg" alt="Thaylon" title="Thaylon — Átrio Marketing & Business" class="brand-avatar">
     </div>
   </div>
 
@@ -180,6 +182,7 @@ var active = "geral";
 var adsPeriod = "hoje"; // hoje | 3d | 7d | 30d | total
 
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function brl(v){ return 'R$ '+(Number(v||0)).toFixed(2); }
 
 // calcula since/until (YYYY-MM-DD) e o rótulo pro período selecionado das campanhas
 function periodRange(key){
@@ -286,31 +289,51 @@ function convRate(data){
 }
 
 function viewGeral(){
+  var periodo = periodRange(adsPeriod);
+  var adsData = cache["ads_"+adsPeriod];
+  var byProject = (adsData && adsData.by_project) || {};
+  var OBJ_LABEL = { compra:"Compra", lead:"Lead" };
+
+  var periodsHtml = '<div class="period-bar">' +
+    [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
+      return '<button class="period-btn'+(adsPeriod===p[0]?" on":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>';
+    }).join('') + '</div>';
+
   var funis = FONTES.filter(function(f){ return f.type==="funnel"; });
-  var totalSessions = 0, totalEventos = 0, weightedConv = 0;
+  var totalSessions = 0, totalEventos = 0, totalGasto = 0;
   var rows = funis.map(function(f){
     var d = cache[f.id];
     var sessions = d ? (d.total_sessions||0) : 0;
     var eventos = d ? (d.total_eventos||0) : 0;
     var conv = convRate(d);
+    var ad = byProject[f.id];
     totalSessions += sessions; totalEventos += eventos;
-    return {f:f, sessions:sessions, eventos:eventos, conv:conv, ok: !!d};
+    if(ad) totalGasto += ad.spend;
+    return {f:f, sessions:sessions, eventos:eventos, conv:conv, ok: !!d, ad:ad};
   });
   var maxSessions = Math.max.apply(null, rows.map(function(r){return r.sessions}).concat([1]));
 
-  var html = '<div class="cards">'+
+  var html = periodsHtml;
+  html += '<div class="cards">'+
     '<div class="card"><div class="n">'+totalSessions+'</div><div class="l">Sessões — todos os funis</div></div>'+
     '<div class="card"><div class="n">'+totalEventos+'</div><div class="l">Eventos registrados</div></div>'+
+    '<div class="card"><div class="n">'+brl(totalGasto)+'</div><div class="l">Investido em anúncios — '+esc(periodo.label)+'</div></div>'+
     '<div class="card"><div class="n">'+funis.length+'</div><div class="l">Funis ativos</div></div>'+
   '</div>';
 
-  html += '<div class="section-title">Comparativo entre funis</div><div class="compare">';
+  html += '<div class="section-title">Comparativo entre projetos — '+esc(periodo.label)+'</div><div class="compare">';
   rows.forEach(function(r){
     var pct = maxSessions ? Math.round((r.sessions/maxSessions)*100) : 0;
+    var adLine = '';
+    if(r.ad){
+      var objetivo = r.ad.objetivo||'lead';
+      adLine = '<div class="cmp-ads">'+brl(r.ad.spend)+' investido · Resultados ('+OBJ_LABEL[objetivo]+'): <b>'+r.ad.resultados+'</b> · Custo/resultado: <b>'+brl(r.ad.custo_por_resultado)+'</b></div>';
+    }
     html += '<div class="cmp-row" data-id="'+r.f.id+'">'+
       '<div class="cmp-top"><div class="cmp-left"><span class="d" style="background:'+r.f.color+'"></span><b>'+esc(r.f.label)+'</b></div>'+
       '<div class="cmp-right">'+(r.ok?'':'<span>sem dados</span>')+(r.ok?('<span>'+r.conv+'% conversão</span><b>'+r.sessions+'</b>'):'')+'</div></div>'+
       '<div class="cmp-bar"><i style="width:'+pct+'%;background:'+r.f.color+'"></i></div>'+
+      adLine +
     '</div>';
   });
   var soon = FONTES.filter(function(f){ return f.type==="soon"; });
@@ -323,6 +346,7 @@ function viewGeral(){
   html += '</div>';
 
   document.getElementById("view").innerHTML = html;
+  bindPeriodButtons();
   document.querySelectorAll(".cmp-row[data-id]").forEach(function(el){
     el.onclick = function(){ active = el.getAttribute("data-id"); draw(); };
   });
@@ -353,8 +377,6 @@ function viewAds(f){
   var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
   var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", outros:"#8E7CC3" };
   var OBJ_LABEL = { compra:"Compra", lead:"Lead" };
-
-  function brl(v){ return 'R$ '+(Number(v||0)).toFixed(2); }
   var projKeys = Object.keys(byProject);
 
   var html = periodsHtml;
