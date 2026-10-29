@@ -139,9 +139,62 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .src-other{background:#3A3F4B}
 .sess-tag{font-size:11px;font-weight:700;color:#07181a;border-radius:999px;padding:2px 8px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .soon{color:var(--muted);font-size:13.5px;line-height:1.6;padding:30px 4px}
+.gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;padding:16px}
+.gate-box{width:100%;max-width:320px;text-align:center}
+.gate-box .brand-logo{height:34px;width:auto;filter:invert(1);margin-bottom:22px}
+.gate-box input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--fg);font-size:15px;
+  padding:12px 14px;border-radius:var(--rs);font-family:inherit;outline:none;text-align:center;margin-bottom:10px}
+.gate-box input:focus{border-color:var(--accent)}
+.gate-box button{width:100%;background:var(--accent-l);border:none;color:#07181a;font-size:14px;font-weight:700;
+  padding:12px 14px;border-radius:var(--rs);cursor:pointer;font-family:inherit}
+.gate-box .err{color:#e98a8a;font-size:12.5px;margin-top:10px;min-height:16px}
+body.locked .wrap{display:none}
 </style>
 </head>
-<body>
+<body class="locked">
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <img src="assets/logo.png" alt="Átrio" class="brand-logo">
+    <input type="password" id="gatePass" placeholder="Senha" autocomplete="current-password">
+    <button id="gateBtn">Entrar</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var HASH = "fee30ff8cb7b8b9d49cf229d140f75be1c6fda2f4f088d11828da69b25aac251";
+  async function sha256(txt){
+    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+  }
+  function unlock(){
+    document.body.classList.remove("locked");
+    var g = document.getElementById("gate");
+    if (g) g.remove();
+  }
+  if (sessionStorage.getItem("painel_auth") === HASH) {
+    unlock();
+  } else {
+    var pass = document.getElementById("gatePass");
+    var btn = document.getElementById("gateBtn");
+    var err = document.getElementById("gateErr");
+    var tentar = async function(){
+      var h = await sha256(pass.value || "");
+      if (h === HASH) {
+        sessionStorage.setItem("painel_auth", HASH);
+        unlock();
+      } else {
+        err.textContent = "Senha incorreta.";
+        pass.value = "";
+        pass.focus();
+      }
+    };
+    btn.onclick = tentar;
+    pass.addEventListener("keydown", function(e){ if (e.key === "Enter") tentar(); });
+    setTimeout(function(){ pass.focus(); }, 50);
+  }
+})();
+</script>
 <div class="wrap">
   <div class="head">
     <div>
