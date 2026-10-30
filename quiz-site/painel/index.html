@@ -683,7 +683,7 @@ function viewFunil(f){
           origemHtml+
           (tag ? '<span class="sess-tag" style="background:'+f.color+'">'+esc((f.tagPrefix||"")+tag)+'</span>' : '')+
           '<span class="sess-step">'+esc(s.step_label)+'</span>'+
-          '<span class="sess-count">'+qas.length+' resp.</span>'+
+          '<span class="sess-count">'+qas.length+(qas.length===1?' resposta':' respostas')+'</span>'+
           '<span class="sess-caret">▸</span>'+
         '</div>'+
       '</div>'+
