@@ -276,15 +276,22 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return
 function brl(v){ return 'R$ '+(Number(v||0)).toFixed(2); }
 
 // calcula since/until (YYYY-MM-DD) e o rótulo pro período selecionado das campanhas
+// meia-noite em São Paulo (UTC-3), como instante UTC — independe do fuso do navegador.
+// (usar toISOString().slice(0,10) direto usava o dia em UTC, que vira o dia seguinte
+// a partir das 21h de Brasília, zerando "Hoje" nas últimas horas do dia.)
+function spMidnight(offsetDays){
+  var fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' });
+  var parts = fmt.formatToParts(new Date()).reduce(function(o,p){ o[p.type]=p.value; return o; }, {});
+  return new Date(Date.UTC(+parts.year, +parts.month - 1, +parts.day + offsetDays, 3, 0, 0));
+}
 function periodRange(key){
-  function iso(d){ return d.toISOString().slice(0,10); }
-  function addDays(n){ var d = new Date(); d.setDate(d.getDate()+n); return d; }
-  var tomorrow = iso(addDays(1));
+  function iso(d){ return d.toISOString(); }
+  var tomorrow = iso(spMidnight(1));
   switch(key){
-    case "hoje": return { since: iso(addDays(0)), until: tomorrow, label: "Hoje" };
-    case "3d":   return { since: iso(addDays(-2)), until: tomorrow, label: "Últimos 3 dias" };
-    case "7d":   return { since: iso(addDays(-6)), until: tomorrow, label: "Últimos 7 dias" };
-    case "30d":  return { since: iso(addDays(-29)), until: tomorrow, label: "Últimos 30 dias" };
+    case "hoje": return { since: iso(spMidnight(0)), until: tomorrow, label: "Hoje" };
+    case "3d":   return { since: iso(spMidnight(-2)), until: tomorrow, label: "Últimos 3 dias" };
+    case "7d":   return { since: iso(spMidnight(-6)), until: tomorrow, label: "Últimos 7 dias" };
+    case "30d":  return { since: iso(spMidnight(-29)), until: tomorrow, label: "Últimos 30 dias" };
     default:     return { since: null, until: null, label: "Total" };
   }
 }
