@@ -288,11 +288,12 @@ function periodRange(key){
   function iso(d){ return d.toISOString(); }
   var tomorrow = iso(spMidnight(1));
   switch(key){
-    case "hoje": return { since: iso(spMidnight(0)), until: tomorrow, label: "Hoje" };
-    case "3d":   return { since: iso(spMidnight(-2)), until: tomorrow, label: "Últimos 3 dias" };
-    case "7d":   return { since: iso(spMidnight(-6)), until: tomorrow, label: "Últimos 7 dias" };
-    case "30d":  return { since: iso(spMidnight(-29)), until: tomorrow, label: "Últimos 30 dias" };
-    default:     return { since: null, until: null, label: "Total" };
+    case "hoje":   return { since: iso(spMidnight(0)), until: tomorrow, label: "Hoje" };
+    case "ontem":  return { since: iso(spMidnight(-1)), until: iso(spMidnight(0)), label: "Ontem" };
+    case "3d":     return { since: iso(spMidnight(-2)), until: tomorrow, label: "Últimos 3 dias" };
+    case "7d":     return { since: iso(spMidnight(-6)), until: tomorrow, label: "Últimos 7 dias" };
+    case "30d":    return { since: iso(spMidnight(-29)), until: tomorrow, label: "Últimos 30 dias" };
+    default:       return { since: null, until: null, label: "Total" };
   }
 }
 
@@ -393,7 +394,7 @@ function viewGeral(){
   var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", outros:"#8E7CC3" };
 
   var periodsHtml = '<div class="period-bar">' +
-    [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
+    [["hoje","Hoje"],["ontem","Ontem"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
       return '<button class="period-btn'+(adsPeriod===p[0]?" on":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>';
     }).join('') + '</div>';
 
@@ -504,7 +505,7 @@ function viewAds(f){
   var data = cache["ads_"+adsPeriod];
 
   var periodsHtml = '<div class="period-bar">' +
-    [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
+    [["hoje","Hoje"],["ontem","Ontem"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
       return '<button class="period-btn'+(adsPeriod===p[0]?" on":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>';
     }).join('') + '</div>';
 
@@ -608,7 +609,7 @@ function bindPeriodButtons(){
 function viewFunil(f){
   var periodo = periodRange(adsPeriod);
   var periodsHtml = '<div class="period-bar">' +
-    [["hoje","Hoje"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
+    [["hoje","Hoje"],["ontem","Ontem"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
       return '<button class="period-btn'+(adsPeriod===p[0]?" on":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>';
     }).join('') + '</div>';
   var data = cache[f.id+"_"+adsPeriod];
