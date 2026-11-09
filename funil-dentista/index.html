@@ -150,12 +150,14 @@ var steps=[
    field:"Seu nome",cta:"Começar →"},
   {type:"single",q:"Hoje você investe em anúncios para atrair pacientes?",
    options:["Não, nunca investi","Já tentei, mas não deu retorno","Sim, invisto atualmente"]},
+  {type:"single",q:"Quanto você investe por mês em anúncios?",
+   options:["Até R$ 500","R$ 500 a R$ 1.500","R$ 1.500 a R$ 3.000","Acima de R$ 3.000"],
+   dep:"Hoje você investe em anúncios para atrair pacientes?",
+   showIf:function(){return answers["Hoje você investe em anúncios para atrair pacientes?"]==="Sim, invisto atualmente";}},
   {type:"single",q:"Quanto sua clínica fatura por mês hoje?",
    options:["Até R$ 20 mil","R$ 20 a 50 mil","R$ 50 a 100 mil","Acima de R$ 100 mil"]},
   {type:"single",q:"Qual sua maior dificuldade hoje?",
    options:["Agenda vazia em horários específicos","Pacientes de baixo ticket","Dependência de indicação","Falta de tempo pra cuidar de marketing"]},
-  {type:"single",q:"Quantos pacientes novos por mês você gostaria de atrair?",
-   options:["5 a 10","10 a 20","20 a 40","Mais de 40"]},
   {type:"video",eyebrow:"Depoimento",title:"Veja quem já aplicou esse método",
    sub:"Clínica odontológica do Rio Grande do Sul, Dra. Thays.",yt:"VFz4CQwzpHQ",cta:"Continuar →"},
   {type:"form",eyebrow:"Chega de agenda vazia",title:"Uma estrutura completa pra transformar lead em paciente",
@@ -199,8 +201,9 @@ function trackStep(s){
 
 function render(){
   var s=steps[idx];
-  $("#bar").style.width=(idx/(steps.length-1)*100)+"%";
-  $("#stepno").textContent="Etapa "+(idx+1)+" de "+steps.length;
+  var vis=steps.filter(function(st){return visible(st)||(st.dep&&answers[st.dep]===undefined);}), vpos=vis.indexOf(s);
+  $("#bar").style.width=(vpos/(vis.length-1)*100)+"%";
+  $("#stepno").textContent="Etapa "+(vpos+1)+" de "+vis.length;
   var scr=$("#screen"), ft=$("#footer"); scr.innerHTML=""; ft.innerHTML="";
   trackStep(s);
   if(s.type==="name"){
@@ -293,8 +296,9 @@ function scrollToForm(){
 }
 function mkCta(label,fn){var b=document.createElement("button");b.className="cta";b.textContent=label;b.onclick=fn;return b;}
 function mkBack(){var b=document.createElement("button");b.className="back";b.textContent="← Voltar";b.onclick=prev;return b;}
-function next(){if(idx<steps.length-1){idx++;render();}}
-function prev(){if(idx>0){idx--;render();}}
+function visible(st){return !st.showIf||st.showIf();}
+function next(){var i=idx+1;while(i<steps.length&&!visible(steps[i]))i++;if(i<steps.length){idx=i;render();}}
+function prev(){var i=idx-1;while(i>0&&!visible(steps[i]))i--;if(i>=0){idx=i;render();}}
 
 function fieldsHtml(fields,compact){
   var cls=compact?"field compact":"field", pre=compact?"fc_":"f_", h="";
