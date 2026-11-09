@@ -39,8 +39,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 /* arrastar pra reorganizar: mouse arrasta direto; no celular, segura ~0,4s e arrasta */
 .tab{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 @media(hover:hover){.tab{cursor:grab}}
-.tab.dragging{opacity:.75;transform:scale(1.06);box-shadow:0 10px 26px -8px rgba(0,0,0,.7),0 0 0 2px var(--accent-l);cursor:grabbing;z-index:2;position:relative}
-.tabs.reordering .tab:not(.dragging){transition:transform .12s}
+.tabs{position:relative}
+.tab.dragging{opacity:.95;z-index:3;position:relative;cursor:grabbing;will-change:transform;box-shadow:0 14px 30px -10px rgba(0,0,0,.75),0 0 0 2px var(--accent-l)}
 
 @media(max-width:620px){
   body{padding:18px 14px 50px}
@@ -377,30 +377,83 @@ function renderTabs(){
   initTabDrag();
 }
 
-// arrastar abas: mouse arrasta direto; toque segura ~0,4s e arrasta (sem segurar, rola normal)
-var tabDrag = { el:null, on:false, timer:null, x0:0, y0:0, justDropped:false, ready:false };
+// arrastar abas: mouse arrasta direto; toque segura ~0,4s e arrasta (sem segurar, rola normal).
+// A aba segue o dedo/mouse e as outras deslizam pro lugar (animação FLIP).
+var tabDrag = { el:null, on:false, timer:null, x0:0, y0:0, gx:0, gy:0, x:0, y:0, raf:0, justDropped:false, ready:false };
 function initTabDrag(){
   if(tabDrag.ready) return;
   tabDrag.ready = true;
   var box = document.getElementById("tabs");
-  function start(el){
-    tabDrag.on = true; tabDrag.el = el;
-    el.classList.add("dragging"); box.classList.add("reordering");
-    if(navigator.vibrate) try{ navigator.vibrate(20); }catch(e){}
+  var EASE = "cubic-bezier(.2,.8,.2,1)";
+  function tabs(){ return Array.prototype.slice.call(box.querySelectorAll(".tab")); }
+  function natural(el){ // posição na tela sem o transform (offsetLeft ignora transform)
+    var b = box.getBoundingClientRect();
+    return { left: b.left + box.clientLeft + el.offsetLeft - box.scrollLeft, top: b.top + box.clientTop + el.offsetTop - box.scrollTop };
   }
-  function moveTo(x, y){
-    var el = tabDrag.el; if(!el) return;
-    var under = document.elementFromPoint(x, y), t = under && under.closest ? under.closest(".tab") : null;
+  function place(){
+    var el = tabDrag.el, n = natural(el);
+    var tx = tabDrag.x - tabDrag.gx - n.left, ty = tabDrag.y - tabDrag.gy - n.top;
+    el.style.transform = "translate3d("+tx+"px,"+ty+"px,0) scale(1.05)";
+  }
+  function flip(mutate){
+    var others = tabs().filter(function(t){ return t !== tabDrag.el; });
+    var before = others.map(function(t){ return t.getBoundingClientRect(); });
+    mutate();
+    others.forEach(function(t, i){
+      t.style.transition = "none"; t.style.transform = "";
+      var a = t.getBoundingClientRect(), dx = before[i].left - a.left, dy = before[i].top - a.top;
+      if(!dx && !dy) return;
+      t.style.transform = "translate3d("+dx+"px,"+dy+"px,0)";
+      t.getBoundingClientRect();
+      t.style.transition = "transform .2s "+EASE; t.style.transform = "";
+    });
+  }
+  function reorder(){
+    var el = tabDrag.el, x = tabDrag.x, y = tabDrag.y;
+    el.style.pointerEvents = "none";
+    var under = document.elementFromPoint(x, y);
+    el.style.pointerEvents = "";
+    var t = under && under.closest ? under.closest(".tab") : null;
     if(!t || t === el || t.parentNode !== box) return;
-    var r = t.getBoundingClientRect(), after = x > r.left + r.width/2;
-    box.insertBefore(el, after ? t.nextSibling : t);
+    var list = tabs(), iEl = list.indexOf(el), iT = list.indexOf(t);
+    var n = natural(t), mid = n.left + t.offsetWidth/2;
+    if(iT > iEl && x > mid) flip(function(){ box.insertBefore(el, t.nextSibling); });
+    else if(iT < iEl && x < mid) flip(function(){ box.insertBefore(el, t); });
+  }
+  function frame(){
+    tabDrag.raf = 0;
+    if(!tabDrag.on) return;
+    // rolagem automática quando a aba chega na borda da barra (celular)
+    var b = box.getBoundingClientRect(), edge = 36, sc = 0;
+    if(box.scrollWidth > box.clientWidth){
+      if(tabDrag.x < b.left + edge) sc = -8; else if(tabDrag.x > b.right - edge) sc = 8;
+    }
+    if(sc) box.scrollLeft += sc;
+    reorder(); place();
+    if(sc) tabDrag.raf = requestAnimationFrame(frame);
+  }
+  function schedule(x, y){ tabDrag.x = x; tabDrag.y = y; if(!tabDrag.raf) tabDrag.raf = requestAnimationFrame(frame); }
+  function start(){
+    var el = tabDrag.el, r = el.getBoundingClientRect();
+    tabDrag.on = true; tabDrag.gx = tabDrag.x0 - r.left; tabDrag.gy = tabDrag.y0 - r.top;
+    tabDrag.x = tabDrag.x0; tabDrag.y = tabDrag.y0;
+    el.classList.add("dragging");
+    el.style.transition = "transform .14s "+EASE+", box-shadow .14s";
+    place();
+    setTimeout(function(){ if(tabDrag.el === el && tabDrag.on) el.style.transition = "box-shadow .14s"; }, 140);
+    if(navigator.vibrate) try{ navigator.vibrate(15); }catch(e){}
   }
   function finish(){
-    clearTimeout(tabDrag.timer);
-    if(tabDrag.on){
-      var ids = Array.prototype.map.call(box.querySelectorAll(".tab"), function(b){ return b.getAttribute("data-id"); });
+    clearTimeout(tabDrag.timer); tabDrag.timer = null;
+    if(tabDrag.raf){ cancelAnimationFrame(tabDrag.raf); tabDrag.raf = 0; }
+    var el = tabDrag.el;
+    if(tabDrag.on && el){
+      var ids = tabs().map(function(b){ return b.getAttribute("data-id"); });
       try{ localStorage.setItem("painel_tab_order", JSON.stringify(ids)); }catch(e){}
-      tabDrag.el.classList.remove("dragging"); box.classList.remove("reordering");
+      el.style.transition = "transform .2s "+EASE+", box-shadow .2s";
+      el.style.transform = "";
+      el.classList.remove("dragging");
+      setTimeout(function(){ el.style.transition = ""; }, 220);
       tabDrag.justDropped = true; setTimeout(function(){ tabDrag.justDropped = false; }, 60);
     }
     tabDrag.on = false; tabDrag.el = null;
@@ -413,8 +466,8 @@ function initTabDrag(){
   });
   document.addEventListener("mousemove", function(e){
     if(!tabDrag.el) return;
-    if(!tabDrag.on && Math.abs(e.clientX-tabDrag.x0) + Math.abs(e.clientY-tabDrag.y0) > 6) start(tabDrag.el);
-    if(tabDrag.on) moveTo(e.clientX, e.clientY);
+    if(!tabDrag.on && Math.abs(e.clientX-tabDrag.x0) + Math.abs(e.clientY-tabDrag.y0) > 5) start();
+    if(tabDrag.on) schedule(e.clientX, e.clientY);
   });
   document.addEventListener("mouseup", function(){ if(tabDrag.el) finish(); });
   // toque
@@ -422,13 +475,13 @@ function initTabDrag(){
     var t = e.target.closest(".tab"); if(!t || e.touches.length !== 1) return;
     tabDrag.el = t; tabDrag.x0 = e.touches[0].clientX; tabDrag.y0 = e.touches[0].clientY;
     clearTimeout(tabDrag.timer);
-    tabDrag.timer = setTimeout(function(){ if(tabDrag.el) start(tabDrag.el); }, 400);
+    tabDrag.timer = setTimeout(function(){ tabDrag.timer = null; if(tabDrag.el) start(); }, 380);
   }, { passive:true });
   box.addEventListener("touchmove", function(e){
     if(!tabDrag.el) return;
     var p = e.touches[0];
-    if(tabDrag.on){ e.preventDefault(); moveTo(p.clientX, p.clientY); return; }
-    if(Math.abs(p.clientX-tabDrag.x0) + Math.abs(p.clientY-tabDrag.y0) > 8){ clearTimeout(tabDrag.timer); tabDrag.el = null; } // virou rolagem
+    if(tabDrag.on){ e.preventDefault(); schedule(p.clientX, p.clientY); return; }
+    if(Math.abs(p.clientX-tabDrag.x0) + Math.abs(p.clientY-tabDrag.y0) > 8){ clearTimeout(tabDrag.timer); tabDrag.timer = null; tabDrag.el = null; } // virou rolagem
   }, { passive:false });
   box.addEventListener("touchend", function(e){ if(tabDrag.on) e.preventDefault(); finish(); });
   box.addEventListener("touchcancel", finish);
