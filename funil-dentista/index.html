@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mais Pacientes para sua Clínica</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0B'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23C9A45C'/%3E%3C/svg%3E">
-<link rel="preload" as="image" href="assets/intro-hero.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -145,10 +144,10 @@ var STEP_WEBHOOK_URL = "https://n8n.manuai.com.br/webhook/funil-dentista-step";
 // ================================
 
 var steps=[
-  {type:"intro",eyebrow:"Para dentistas",title:"Sua agenda vazia enquanto a clínica ao lado lota de pacientes?",
-   sub:"Descubra em 1 minuto se sua clínica está perdendo pacientes por falta da metodologia certa.",
+  {type:"name",eyebrow:"Para dentistas",title:"Sua agenda vazia enquanto a clínica ao lado lota de pacientes?",
+   sub:"Depender só de indicação não vai levar sua clínica pro próximo nível. Descubra em 1 minuto o que está travando a sua.",
    social:"Método aplicado em clínicas reais, incluindo a da Dra. Thays (RS)",
-   hero:"assets/intro-hero.jpg",cta:"Começar →"},
+   field:"Seu nome",cta:"Começar →"},
   {type:"single",q:"Hoje você investe em anúncios para atrair pacientes?",
    options:["Não, nunca investi","Já tentei, mas não deu retorno","Sim, invisto atualmente"]},
   {type:"single",q:"Quanto sua clínica fatura por mês hoje?",
@@ -172,7 +171,7 @@ var steps=[
    ],
    proof:{tag:"Ganho",name:"M. M.",detail:"Fechamento: protocolo protese em porcelana, entrada de R$ 4.000 + 12x de R$ 1.083",valueLabel:"Negociação conduzida direto pelo WhatsApp, via Manu.ia",shot:"assets/prova-social.png"},
    formTitle:"Pra onde enviamos sua análise gratuita?",
-   fields:[{k:"nome",label:"Seu nome"},{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
+   fields:[{k:"whatsapp",label:"WhatsApp (com DDD)"},{k:"cidade",label:"Cidade / Estado"}],
    cta:"Quero minha análise gratuita"},
   {type:"thanks",title:"Recebemos seus dados",sub:"Nossa equipe vai te chamar no WhatsApp em até 1 dia útil com a análise da sua clínica."}
 ];
@@ -204,7 +203,19 @@ function render(){
   $("#stepno").textContent="Etapa "+(idx+1)+" de "+steps.length;
   var scr=$("#screen"), ft=$("#footer"); scr.innerHTML=""; ft.innerHTML="";
   trackStep(s);
-  if(s.type==="intro"){
+  if(s.type==="name"){
+    scr.innerHTML='<div class="eyebrow">'+esc(s.eyebrow)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub)+'</p>'+
+      (s.social?'<div class="intro-social" style="margin-bottom:18px"><span class="dot2"></span>'+esc(s.social)+'</div>':'')+
+      '<div class="field"><label for="f_intro_nome">'+esc(s.field)+'</label><input id="f_intro_nome" type="text" autocomplete="name"></div>'+
+      '<div class="err" id="errname"></div>';
+    var go=function(){
+      var v=$("#f_intro_nome").value.trim();
+      if(!v){$("#errname").textContent="Digite seu nome pra começar.";return;}
+      answers.nome=v; next();
+    };
+    $("#f_intro_nome").addEventListener("keydown",function(e){if(e.key==="Enter")go();});
+    ft.appendChild(mkCta(s.cta,go));
+  }else if(s.type==="intro"){
     var introHtml='';
     if(s.hero){
       introHtml+='<div class="intro-hero"><picture>'+
@@ -278,7 +289,7 @@ function render(){
   window.scrollTo(0,0);
 }
 function scrollToForm(){
-  var el=$("#f_nome"); if(el){ el.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){el.focus();},350); }
+  var el=$("#f_whatsapp")||$("#f_nome"); if(el){ el.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){el.focus();},350); }
 }
 function mkCta(label,fn){var b=document.createElement("button");b.className="cta";b.textContent=label;b.onclick=fn;return b;}
 function mkBack(){var b=document.createElement("button");b.className="back";b.textContent="← Voltar";b.onclick=prev;return b;}
@@ -311,6 +322,7 @@ function submitLead(){
   setErr("");
   var btns=document.querySelectorAll(".cta");
   btns.forEach(function(b){b.disabled=true;b.textContent="Enviando...";});
+  if(!lead.nome&&answers.nome) lead.nome=answers.nome;
   lead.answers=answers;
   lead.session_id=sessionId();
   fetch(WEBHOOK_URL,{
