@@ -36,6 +36,11 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
   padding:8px 16px;border-radius:999px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px}
 .tab .d{width:7px;height:7px;border-radius:50%;flex:none}
 .tab.on{color:#07181a;background:var(--accent-l);border-color:var(--accent-l)}
+/* arrastar pra reorganizar: mouse arrasta direto; no celular, segura ~0,4s e arrasta */
+.tab{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+@media(hover:hover){.tab{cursor:grab}}
+.tab.dragging{opacity:.75;transform:scale(1.06);box-shadow:0 10px 26px -8px rgba(0,0,0,.7),0 0 0 2px var(--accent-l);cursor:grabbing;z-index:2;position:relative}
+.tabs.reordering .tab:not(.dragging){transition:transform .12s}
 
 @media(max-width:620px){
   body{padding:18px 14px 50px}
@@ -344,15 +349,90 @@ function barChart(title, items, fmt){
   return '<div class="chart-card"><div class="ct">'+esc(title)+'</div><div class="bars">'+rows+'</div></div>';
 }
 
+// ordem das abas: salva no navegador (arrastar pra reorganizar)
+function tabOrder(){
+  var ids = ["geral"].concat(FONTES.map(function(f){ return f.id; })), saved = [];
+  try{ saved = JSON.parse(localStorage.getItem("painel_tab_order")||"[]"); }catch(e){}
+  var out = saved.filter(function(id){ return ids.indexOf(id) >= 0; });
+  ids.forEach(function(id){ if(out.indexOf(id) < 0) out.push(id); }); // abas novas entram no fim
+  return out;
+}
 function renderTabs(){
-  var html = '<button class="tab'+(active==="geral"?" on":"")+'" data-id="geral"><span class="d" style="background:#fff"></span>Visão geral</button>';
-  FONTES.forEach(function(f){
+  var html = "";
+  tabOrder().forEach(function(id){
+    if(id === "geral"){
+      html += '<button class="tab'+(active==="geral"?" on":"")+'" data-id="geral"><span class="d" style="background:#fff"></span>Visão geral</button>';
+      return;
+    }
+    var f = FONTES.filter(function(x){ return x.id === id; })[0];
     html += '<button class="tab'+(active===f.id?" on":"")+'" data-id="'+f.id+'"><span class="d" style="background:'+(f.color||"#777")+'"></span>'+esc(f.label)+'</button>';
   });
   document.getElementById("tabs").innerHTML = html;
   document.querySelectorAll(".tab").forEach(function(btn){
-    btn.onclick = function(){ active = btn.getAttribute("data-id"); try{localStorage.setItem("painel_tab",active)}catch(e){}; draw(); };
+    btn.onclick = function(){
+      if(tabDrag.justDropped) return;
+      active = btn.getAttribute("data-id"); try{localStorage.setItem("painel_tab",active)}catch(e){}; draw();
+    };
   });
+  initTabDrag();
+}
+
+// arrastar abas: mouse arrasta direto; toque segura ~0,4s e arrasta (sem segurar, rola normal)
+var tabDrag = { el:null, on:false, timer:null, x0:0, y0:0, justDropped:false, ready:false };
+function initTabDrag(){
+  if(tabDrag.ready) return;
+  tabDrag.ready = true;
+  var box = document.getElementById("tabs");
+  function start(el){
+    tabDrag.on = true; tabDrag.el = el;
+    el.classList.add("dragging"); box.classList.add("reordering");
+    if(navigator.vibrate) try{ navigator.vibrate(20); }catch(e){}
+  }
+  function moveTo(x, y){
+    var el = tabDrag.el; if(!el) return;
+    var under = document.elementFromPoint(x, y), t = under && under.closest ? under.closest(".tab") : null;
+    if(!t || t === el || t.parentNode !== box) return;
+    var r = t.getBoundingClientRect(), after = x > r.left + r.width/2;
+    box.insertBefore(el, after ? t.nextSibling : t);
+  }
+  function finish(){
+    clearTimeout(tabDrag.timer);
+    if(tabDrag.on){
+      var ids = Array.prototype.map.call(box.querySelectorAll(".tab"), function(b){ return b.getAttribute("data-id"); });
+      try{ localStorage.setItem("painel_tab_order", JSON.stringify(ids)); }catch(e){}
+      tabDrag.el.classList.remove("dragging"); box.classList.remove("reordering");
+      tabDrag.justDropped = true; setTimeout(function(){ tabDrag.justDropped = false; }, 60);
+    }
+    tabDrag.on = false; tabDrag.el = null;
+  }
+  // mouse
+  box.addEventListener("mousedown", function(e){
+    var t = e.target.closest(".tab"); if(!t || e.button !== 0) return;
+    tabDrag.el = t; tabDrag.x0 = e.clientX; tabDrag.y0 = e.clientY;
+    e.preventDefault();
+  });
+  document.addEventListener("mousemove", function(e){
+    if(!tabDrag.el) return;
+    if(!tabDrag.on && Math.abs(e.clientX-tabDrag.x0) + Math.abs(e.clientY-tabDrag.y0) > 6) start(tabDrag.el);
+    if(tabDrag.on) moveTo(e.clientX, e.clientY);
+  });
+  document.addEventListener("mouseup", function(){ if(tabDrag.el) finish(); });
+  // toque
+  box.addEventListener("touchstart", function(e){
+    var t = e.target.closest(".tab"); if(!t || e.touches.length !== 1) return;
+    tabDrag.el = t; tabDrag.x0 = e.touches[0].clientX; tabDrag.y0 = e.touches[0].clientY;
+    clearTimeout(tabDrag.timer);
+    tabDrag.timer = setTimeout(function(){ if(tabDrag.el) start(tabDrag.el); }, 400);
+  }, { passive:true });
+  box.addEventListener("touchmove", function(e){
+    if(!tabDrag.el) return;
+    var p = e.touches[0];
+    if(tabDrag.on){ e.preventDefault(); moveTo(p.clientX, p.clientY); return; }
+    if(Math.abs(p.clientX-tabDrag.x0) + Math.abs(p.clientY-tabDrag.y0) > 8){ clearTimeout(tabDrag.timer); tabDrag.el = null; } // virou rolagem
+  }, { passive:false });
+  box.addEventListener("touchend", function(e){ if(tabDrag.on) e.preventDefault(); finish(); });
+  box.addEventListener("touchcancel", finish);
+  box.addEventListener("contextmenu", function(e){ if(tabDrag.on || tabDrag.timer) e.preventDefault(); });
 }
 
 function fetchFonte(f){
