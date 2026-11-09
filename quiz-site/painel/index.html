@@ -40,6 +40,29 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
 .tab{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 @media(hover:hover){.tab{cursor:grab}}
 .tabs{position:relative}
+.tabfolder{background:transparent;border:1px dashed rgba(255,255,255,.22);color:var(--muted);font-size:13px;font-weight:600;
+  padding:8px 14px;border-radius:999px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;flex:none;
+  transition:border-color .15s,background .15s,color .15s,transform .15s;user-select:none;-webkit-user-select:none}
+.tabfolder:hover,.tabfolder.open{border-color:var(--accent-l);color:var(--accent-l)}
+.tabfolder.has-active{border-style:solid;border-color:var(--accent-l);color:var(--accent-l)}
+.tabfolder .cnt{font-size:11px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;display:inline-grid;place-items:center;
+  background:rgba(255,255,255,.08);color:var(--fg)}
+.tabs.dragging-on .tabfolder{border-color:var(--accent-l);color:var(--accent-l)}
+.tabfolder.drop-hover{background:rgba(140,215,220,.14);border-style:solid;transform:scale(1.1)}
+.tabfolder.bump{animation:fbump .32s ease}
+@keyframes fbump{40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.folder-pop{margin:-12px 0 22px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;max-width:440px}
+.folder-pop .fp-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:2px 6px 8px;font-size:12.5px}
+.folder-pop .fp-head span{color:var(--muted);font-size:11.5px}
+.fp-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px;border-radius:9px}
+.fp-item.on{background:rgba(255,255,255,.05)}
+.fp-open{flex:1;display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--fg);font:inherit;font-size:13.5px;font-weight:600;
+  text-align:left;padding:7px 8px;border-radius:8px;cursor:pointer}
+.fp-open:hover{background:rgba(255,255,255,.05)}
+.fp-open .d{width:7px;height:7px;border-radius:50%;flex:none}
+.fp-back{flex:none;background:none;border:1px solid var(--line);color:var(--accent-l);font:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;cursor:pointer}
+.fp-back:hover{border-color:var(--accent-l)}
+.fp-empty{color:var(--muted);font-size:12.5px;padding:6px 8px 4px}
 .tab.dragging{opacity:.95;z-index:3;position:relative;cursor:grabbing;will-change:transform;box-shadow:0 14px 30px -10px rgba(0,0,0,.75),0 0 0 2px var(--accent-l)}
 
 @media(max-width:620px){
@@ -250,6 +273,7 @@ body.locked .wrap{display:none}
   </div>
 
   <div class="tabs" id="tabs"></div>
+  <div class="folder-pop" id="folderPop" hidden></div>
   <div id="view"></div>
 </div>
 
@@ -357,35 +381,87 @@ function tabOrder(){
   ids.forEach(function(id){ if(out.indexOf(id) < 0) out.push(id); }); // abas novas entram no fim
   return out;
 }
+// pasta "Pausados": abas arrastadas pra ela saem da barra (continuam abrindo pela pasta)
+function pausedIds(){
+  var ids = ["geral"].concat(FONTES.map(function(f){ return f.id; })), v = [];
+  try{ v = JSON.parse(localStorage.getItem("painel_tab_paused")||"[]"); }catch(e){}
+  return v.filter(function(id){ return id !== "geral" && ids.indexOf(id) >= 0; });
+}
+function setPaused(v){ try{ localStorage.setItem("painel_tab_paused", JSON.stringify(v)); }catch(e){} }
+function tabInfo(id){
+  if(id === "geral") return { label:"Visão geral", color:"#fff" };
+  var f = FONTES.filter(function(x){ return x.id === id; })[0] || {};
+  return { label: f.label || id, color: f.color || "#777" };
+}
+var folderOpen = false;
+var FOLDER_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
 function renderTabs(){
-  var html = "";
-  tabOrder().forEach(function(id){
-    if(id === "geral"){
-      html += '<button class="tab'+(active==="geral"?" on":"")+'" data-id="geral"><span class="d" style="background:#fff"></span>Visão geral</button>';
-      return;
-    }
-    var f = FONTES.filter(function(x){ return x.id === id; })[0];
-    html += '<button class="tab'+(active===f.id?" on":"")+'" data-id="'+f.id+'"><span class="d" style="background:'+(f.color||"#777")+'"></span>'+esc(f.label)+'</button>';
+  var paused = pausedIds(), html = "";
+  tabOrder().filter(function(id){ return paused.indexOf(id) < 0; }).forEach(function(id){
+    var t = tabInfo(id);
+    html += '<button class="tab'+(active===id?" on":"")+'" data-id="'+id+'"><span class="d" style="background:'+t.color+'"></span>'+esc(t.label)+'</button>';
   });
+  html += '<button type="button" class="tabfolder'+(folderOpen?' open':'')+(paused.indexOf(active)>=0?' has-active':'')+'" id="tabFolder" title="Arraste uma aba até aqui pra pausar">'+
+    FOLDER_SVG+'Pausados<span class="cnt">'+paused.length+'</span></button>';
   document.getElementById("tabs").innerHTML = html;
-  document.querySelectorAll(".tab").forEach(function(btn){
+  document.querySelectorAll("#tabs .tab").forEach(function(btn){
     btn.onclick = function(){
       if(tabDrag.justDropped) return;
       active = btn.getAttribute("data-id"); try{localStorage.setItem("painel_tab",active)}catch(e){}; draw();
     };
   });
+  document.getElementById("tabFolder").onclick = function(){ if(tabDrag.justDropped) return; folderOpen = !folderOpen; renderTabs(); };
+  renderFolder();
   initTabDrag();
+}
+function renderFolder(){
+  var pop = document.getElementById("folderPop"); if(!pop) return;
+  if(!folderOpen){ pop.hidden = true; pop.innerHTML = ""; return; }
+  var paused = pausedIds();
+  pop.hidden = false;
+  pop.innerHTML = '<div class="fp-head"><b>Pausados</b><span>Arraste uma aba até a pasta pra pausar</span></div>'+
+    (paused.length ? paused.map(function(id){
+      var t = tabInfo(id);
+      return '<div class="fp-item'+(active===id?' on':'')+'" data-id="'+id+'">'+
+        '<button type="button" class="fp-open"><span class="d" style="background:'+t.color+'"></span>'+esc(t.label)+'</button>'+
+        '<button type="button" class="fp-back">↩ Reativar</button></div>';
+    }).join("") : '<div class="fp-empty">Nenhuma aba pausada.</div>');
+  pop.querySelectorAll(".fp-item").forEach(function(it){
+    var id = it.getAttribute("data-id");
+    it.querySelector(".fp-open").onclick = function(){ active = id; try{localStorage.setItem("painel_tab",active)}catch(e){}; draw(); };
+    it.querySelector(".fp-back").onclick = function(){
+      setPaused(pausedIds().filter(function(x){ return x !== id; }));
+      if(!pausedIds().length) folderOpen = false;
+      animateTabs(renderTabs);
+    };
+  });
+}
+// re-renderiza a barra e faz as abas deslizarem até a nova posição
+function animateTabs(rerender){
+  var box = document.getElementById("tabs"), key = function(el){ return el.id === "tabFolder" ? "folder" : el.getAttribute("data-id"); };
+  var before = {};
+  box.querySelectorAll(".tab,.tabfolder").forEach(function(el){ before[key(el)] = el.getBoundingClientRect(); });
+  rerender();
+  box.querySelectorAll(".tab,.tabfolder").forEach(function(el){
+    var b = before[key(el)], a = el.getBoundingClientRect();
+    if(!b){ el.style.opacity = "0"; el.style.transform = "scale(.85)"; el.getBoundingClientRect();
+      el.style.transition = "opacity .2s, transform .2s cubic-bezier(.2,.8,.2,1)"; el.style.opacity = ""; el.style.transform = ""; return; }
+    var dx = b.left - a.left, dy = b.top - a.top; if(!dx && !dy) return;
+    el.style.transition = "none"; el.style.transform = "translate3d("+dx+"px,"+dy+"px,0)"; el.getBoundingClientRect();
+    el.style.transition = "transform .22s cubic-bezier(.2,.8,.2,1)"; el.style.transform = "";
+  });
 }
 
 // arrastar abas: mouse arrasta direto; toque segura ~0,4s e arrasta (sem segurar, rola normal).
-// A aba segue o dedo/mouse e as outras deslizam pro lugar (animação FLIP).
-var tabDrag = { el:null, on:false, timer:null, x0:0, y0:0, gx:0, gy:0, x:0, y:0, raf:0, justDropped:false, ready:false };
+// A aba segue o dedo/mouse e as outras deslizam pro lugar (animação FLIP). Soltar em cima da pasta = pausar.
+var tabDrag = { el:null, on:false, timer:null, x0:0, y0:0, gx:0, gy:0, x:0, y:0, raf:0, overFolder:false, justDropped:false, ready:false };
 function initTabDrag(){
   if(tabDrag.ready) return;
   tabDrag.ready = true;
   var box = document.getElementById("tabs");
   var EASE = "cubic-bezier(.2,.8,.2,1)";
   function tabs(){ return Array.prototype.slice.call(box.querySelectorAll(".tab")); }
+  function folder(){ return box.querySelector(".tabfolder"); }
   function natural(el){ // posição na tela sem o transform (offsetLeft ignora transform)
     var b = box.getBoundingClientRect();
     return { left: b.left + box.clientLeft + el.offsetLeft - box.scrollLeft, top: b.top + box.clientTop + el.offsetTop - box.scrollTop };
@@ -393,7 +469,7 @@ function initTabDrag(){
   function place(){
     var el = tabDrag.el, n = natural(el);
     var tx = tabDrag.x - tabDrag.gx - n.left, ty = tabDrag.y - tabDrag.gy - n.top;
-    el.style.transform = "translate3d("+tx+"px,"+ty+"px,0) scale(1.05)";
+    el.style.transform = "translate3d("+tx+"px,"+ty+"px,0) scale("+(tabDrag.overFolder ? .9 : 1.05)+")";
   }
   function flip(mutate){
     var others = tabs().filter(function(t){ return t !== tabDrag.el; });
@@ -408,11 +484,18 @@ function initTabDrag(){
       t.style.transition = "transform .2s "+EASE; t.style.transform = "";
     });
   }
+  function setOverFolder(v){
+    tabDrag.overFolder = v;
+    var f = folder(); if(f) f.classList.toggle("drop-hover", v);
+  }
   function reorder(){
     var el = tabDrag.el, x = tabDrag.x, y = tabDrag.y;
     el.style.pointerEvents = "none";
     var under = document.elementFromPoint(x, y);
     el.style.pointerEvents = "";
+    var fo = under && under.closest ? under.closest(".tabfolder") : null;
+    setOverFolder(!!fo && el.getAttribute("data-id") !== "geral");
+    if(fo) return;
     var t = under && under.closest ? under.closest(".tab") : null;
     if(!t || t === el || t.parentNode !== box) return;
     var list = tabs(), iEl = list.indexOf(el), iT = list.indexOf(t);
@@ -437,26 +520,46 @@ function initTabDrag(){
     var el = tabDrag.el, r = el.getBoundingClientRect();
     tabDrag.on = true; tabDrag.gx = tabDrag.x0 - r.left; tabDrag.gy = tabDrag.y0 - r.top;
     tabDrag.x = tabDrag.x0; tabDrag.y = tabDrag.y0;
-    el.classList.add("dragging");
+    el.classList.add("dragging"); box.classList.add("dragging-on");
     el.style.transition = "transform .14s "+EASE+", box-shadow .14s";
     place();
     setTimeout(function(){ if(tabDrag.el === el && tabDrag.on) el.style.transition = "box-shadow .14s"; }, 140);
     if(navigator.vibrate) try{ navigator.vibrate(15); }catch(e){}
   }
+  function saveOrder(){
+    var ids = tabs().map(function(b){ return b.getAttribute("data-id"); }).concat(pausedIds());
+    try{ localStorage.setItem("painel_tab_order", JSON.stringify(ids)); }catch(e){}
+  }
   function finish(){
     clearTimeout(tabDrag.timer); tabDrag.timer = null;
     if(tabDrag.raf){ cancelAnimationFrame(tabDrag.raf); tabDrag.raf = 0; }
-    var el = tabDrag.el;
-    if(tabDrag.on && el){
-      var ids = tabs().map(function(b){ return b.getAttribute("data-id"); });
-      try{ localStorage.setItem("painel_tab_order", JSON.stringify(ids)); }catch(e){}
+    var el = tabDrag.el, wasOn = tabDrag.on, toFolder = tabDrag.overFolder;
+    tabDrag.on = false; tabDrag.el = null; box.classList.remove("dragging-on");
+    if(wasOn && el){
+      tabDrag.justDropped = true; setTimeout(function(){ tabDrag.justDropped = false; }, 60);
+      if(toFolder){
+        // a aba "entra" na pasta e some; as outras fecham o espaço
+        var f = folder(), fr = f.getBoundingClientRect(), n = natural(el);
+        var tx = fr.left + fr.width/2 - el.offsetWidth/2 - n.left, ty = fr.top + fr.height/2 - el.offsetHeight/2 - n.top;
+        el.style.transition = "transform .22s "+EASE+", opacity .22s";
+        el.style.transform = "translate3d("+tx+"px,"+ty+"px,0) scale(.3)"; el.style.opacity = "0";
+        var id = el.getAttribute("data-id");
+        setTimeout(function(){
+          setOverFolder(false);
+          var p = pausedIds(); if(p.indexOf(id) < 0) p.push(id); setPaused(p);
+          saveOrder();
+          animateTabs(renderTabs);
+          var nf = folder(); if(nf){ nf.classList.add("bump"); setTimeout(function(){ nf.classList.remove("bump"); }, 320); }
+        }, 220);
+        return;
+      }
+      saveOrder();
       el.style.transition = "transform .2s "+EASE+", box-shadow .2s";
       el.style.transform = "";
       el.classList.remove("dragging");
       setTimeout(function(){ el.style.transition = ""; }, 220);
-      tabDrag.justDropped = true; setTimeout(function(){ tabDrag.justDropped = false; }, 60);
     }
-    tabDrag.on = false; tabDrag.el = null;
+    setOverFolder(false);
   }
   // mouse
   box.addEventListener("mousedown", function(e){
