@@ -318,6 +318,13 @@ function bindFieldSync(){
   });
 }
 
+// identificadores da Meta pra API de Conversões (atribuição melhor + deduplicação com o pixel)
+function cookie(n){ try{ var m = document.cookie.match(new RegExp("(?:^|; )"+n+"=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; }catch(e){ return ""; } }
+function metaIds(){
+  var fbc = cookie("_fbc");
+  if(!fbc){ var m = (location.search||"").match(/[?&]fbclid=([^&#]+)/); if(m) fbc = "fb.1."+Date.now()+"."+m[1]; }
+  return { fbp: cookie("_fbp"), fbc: fbc };
+}
 function submitLead(){
   var s=steps[idx], lead={}, ok=true;
   s.fields.forEach(function(fd){var v=$("#f_"+fd.k).value.trim();lead[fd.k]=v;if(!v)ok=false;});
@@ -331,11 +338,13 @@ function submitLead(){
   if(!lead.nome&&answers.nome) lead.nome=answers.nome;
   lead.answers=answers;
   lead.session_id=sessionId();
+  var mi=metaIds(); lead.event_id="lead-"+lead.session_id; lead.fbp=mi.fbp; lead.fbc=mi.fbc;
+  lead.page_url=location.origin+location.pathname+location.search; lead.user_agent=navigator.userAgent; lead.event_time=Math.floor(Date.now()/1000);
   fetch(WEBHOOK_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(lead)
-  }).then(function(){ if(typeof fbq==="function") fbq("track","Lead"); next(); })
+  }).then(function(){ if(typeof fbq==="function") fbq("track","Lead",{},{eventID:lead.event_id}); next(); })
     .catch(function(){ setErr("Erro ao enviar. Tente novamente."); btns.forEach(function(b){b.disabled=false;b.textContent=s.cta;}); });
 }
 
