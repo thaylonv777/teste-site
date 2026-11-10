@@ -182,6 +182,9 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui
   border:1px solid var(--line);border-radius:var(--rs);padding:12px 14px;cursor:pointer;
   box-shadow:0 2px 10px rgba(0,0,0,.3);transition:transform .15s,box-shadow .15s}
 .sess:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.sess-funil{display:inline-flex;align-items:center;gap:5px;margin-left:10px;font-size:11px;font-weight:600;border:1px solid;border-radius:999px;padding:1px 8px;white-space:nowrap;vertical-align:middle}
+.sess-funil i{width:6px;height:6px;border-radius:50%;display:inline-block}
+.sess-more{margin:12px auto 0;display:block}
 .sess-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .sess-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:1 1 auto;min-width:0}
 .sess-step{font-size:12px;color:var(--accent-l);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -723,6 +726,17 @@ function viewGeral(){
     html += '</tbody></table></div>';
   }
 
+  // sessões recentes de TODOS os quizzes no período (junta as listas de cada funil)
+  var todas = [];
+  FONTES.forEach(function(f){
+    if(f.type !== "funnel") return;
+    var d = cache[f.id+"_"+adsPeriod];
+    ((d && d.sessions) || []).forEach(function(s){ todas.push({ s:s, f:f }); });
+  });
+  todas.sort(function(a,b){ return new Date(b.s.updated_at||0) - new Date(a.s.updated_at||0); });
+  html += '<div class="section-title" style="margin-top:34px">Sessões recentes — todos os quizzes · '+esc(periodo.label)+'</div>';
+  html += todas.length ? '<div class="sessions" id="sessionsAll"></div><div id="sessMoreWrap"></div>' : '<div class="empty">Nenhuma sessão nesse período.</div>';
+
   document.getElementById("view").innerHTML = html;
   bindPeriodButtons();
   document.querySelectorAll(".cmp-row[data-id]").forEach(function(el){
@@ -732,6 +746,21 @@ function viewGeral(){
   var btnVeic = document.getElementById("toggleVeiculacao");
   if(btnAtivas) btnAtivas.onclick = function(){ filtroAtivas = !filtroAtivas; if(filtroAtivas) filtroVeiculacao = false; draw(); };
   if(btnVeic) btnVeic.onclick = function(){ filtroVeiculacao = !filtroVeiculacao; if(filtroVeiculacao) filtroAtivas = false; draw(); };
+
+  var boxAll = document.getElementById("sessionsAll");
+  if(boxAll){
+    var shown = 0, PAGE = 50;
+    var more = function(){
+      var chunk = todas.slice(shown, shown + PAGE);
+      boxAll.insertAdjacentHTML("beforeend", chunk.map(function(x, j){ return sessHtml(x.s, shown + j, x.f, true); }).join(""));
+      shown += chunk.length;
+      bindSess(boxAll);
+      var w = document.getElementById("sessMoreWrap");
+      w.innerHTML = shown < todas.length ? '<button class="toggle-btn sess-more" id="sessMore">Mostrar mais ('+(todas.length-shown)+')</button>' : '';
+      var b = document.getElementById("sessMore"); if(b) b.onclick = more;
+    };
+    more();
+  }
 }
 
 function viewSoon(f){
@@ -897,7 +926,12 @@ function viewFunil(f){
     sess.innerHTML = '<div class="empty">Nenhuma sessão registrada ainda.</div>';
     return;
   }
-  sess.innerHTML = list.map(function(s,i){
+  sess.innerHTML = list.map(function(s,i){ return sessHtml(s, i, f, false); }).join("");
+  bindSess(sess);
+}
+
+// linha de sessão (usada no painel de cada funil e na lista geral de sessões recentes)
+function sessHtml(s, i, f, comFunil){
     var qas = Object.keys(s.respostas||{}).filter(function(k){ return k !== "origem"; });
     var tag = f.tagField ? (s.respostas||{})[f.tagField] : null;
     var origem = String((s.respostas||{}).origem||"");
@@ -918,7 +952,7 @@ function viewFunil(f){
     }
     return '<div class="sess" data-i="'+i+'">'+
       '<div class="sess-head">'+
-        '<span class="sess-when">'+esc(whenShort)+'</span>'+
+        '<span class="sess-when">'+esc(whenShort)+(comFunil?'<span class="sess-funil" style="color:'+f.color+';border-color:'+f.color+'66"><i style="background:'+f.color+'"></i>'+esc(f.label)+'</span>':'')+'</span>'+
         '<div class="sess-right">'+
           origemHtml+
           (tag ? '<span class="sess-tag" style="background:'+f.color+'">'+esc((f.tagPrefix||"")+tag)+'</span>' : '')+
@@ -930,11 +964,8 @@ function viewFunil(f){
       '<div class="sess-answers">'+answersHtml+(when?'<div class="ans-row"><span class="ans-q">Última atividade</span><span class="ans-a">'+esc(when)+'</span></div>':'')+
         '<div class="ans-row"><span class="ans-q">Sessão</span><span class="ans-a">'+esc(s.session_id)+'</span></div></div>'+
     '</div>';
-  }).join("");
-  sess.querySelectorAll(".sess").forEach(function(el){
-    el.onclick = function(){ el.classList.toggle("open"); };
-  });
 }
+function bindSess(box){ box.querySelectorAll(".sess").forEach(function(el){ el.onclick = function(){ el.classList.toggle("open"); }; }); }
 
 function draw(){
   renderTabs();
