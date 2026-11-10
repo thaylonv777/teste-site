@@ -630,8 +630,8 @@ function viewGeral(){
   var byProject = (adsData && adsData.by_project) || {};
   var byCampaign = (adsData && adsData.by_campaign) || [];
   var OBJ_LABEL = { compra:"Compra", lead:"Lead" };
-  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
-  var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", outros:"#8E7CC3" };
+  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", imob:"Quiz · Imobiliária", estetica:"Quiz · Estética", viagens:"Quiz · Viagens", outros:"Outros/não classificado" };
+  var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", imob:"#4CAF7D", estetica:"#C77DBA", viagens:"#4FA3E0", outros:"#8E7CC3" };
 
   var periodsHtml = '<div class="period-bar">' +
     [["hoje","Hoje"],["ontem","Ontem"],["3d","3 dias"],["7d","7 dias"],["30d","30 dias"],["total","Total"]].map(function(p){
@@ -756,8 +756,8 @@ function viewAds(f){
   }
   var byProject = data.by_project || {};
   var byCampaign = data.by_campaign || [];
-  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", outros:"Outros/não classificado" };
-  var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", outros:"#8E7CC3" };
+  var NOMES = { vgv:"Código VGV", site:"Quiz · Site", dentista:"Funil Dentista", imob:"Quiz · Imobiliária", estetica:"Quiz · Estética", viagens:"Quiz · Viagens", outros:"Outros/não classificado" };
+  var CORES = { vgv:"#C9A45C", site:"#51B5BB", dentista:"#D98E73", imob:"#4CAF7D", estetica:"#C77DBA", viagens:"#4FA3E0", outros:"#8E7CC3" };
   var OBJ_LABEL = { compra:"Compra", lead:"Lead" };
   var projKeys = Object.keys(byProject);
 
