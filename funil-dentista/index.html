@@ -30,7 +30,7 @@ src="https://www.facebook.com/tr?id=1423874645797080&ev=PageView&noscript=1"
   --bg:#FFFFFF; --surface:#FFFFFF; --surface2:#F7F4EE; --line:#E8E3D9;
   --fg:#16181D; --muted:#5F6672;
   --gold:#A8843C; --gold-l:#8C6A28; --gold-deep:#7A5C22; --accent-ink:#FFFFFF;
-  --green:#1E8A5A; --green-d:#166C46;
+  --green:#A8843C; --green-d:#7A5C22; --btn:linear-gradient(135deg,#EFD796 0%,#CDA757 48%,#9C7634 100%); --btn-ink:#1E1606;
   --r:16px; --rs:11px; --maxw:600px;
   --disp:"Inter",-apple-system,sans-serif;
   --body:"Inter",system-ui,-apple-system,sans-serif;
@@ -65,19 +65,19 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .sub{color:var(--muted);text-align:center;max-width:46ch;margin:0 auto 22px;font-size:16px}
 .opts{display:flex;flex-direction:column;gap:11px}
 .opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--line);color:var(--fg);border-radius:var(--r);padding:15px 17px;font:inherit;font-size:16px;font-weight:600;transition:.16s;box-shadow:0 1px 2px rgba(17,24,39,.05)}
-.opt:hover{border-color:var(--green);background:#F6FBF8}
+.opt:hover{border-color:var(--green);background:#FBF7EE}
 .opt .mk{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--muted)}
 .opt:hover .mk{border-color:var(--green);color:var(--green)}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field label{font-size:13.5px;color:var(--muted)}
 .field input{background:#fff;border:1.5px solid var(--line);border-radius:var(--rs);padding:14px 15px;color:var(--fg);font:inherit;font-size:16px}
-.field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(30,138,90,.14)}
+.field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(168,132,60,.18)}
 .done{text-align:center}
 .done .big{width:72px;height:72px;border-radius:50%;background:rgba(201,164,92,.12);border:2px solid var(--gold);display:grid;place-items:center;margin:0 auto 18px}
 .done .big::after{content:"";width:20px;height:36px;border:solid var(--gold);border-width:0 5px 5px 0;transform:rotate(45deg) translate(-2px,-4px)}
 .footer{padding-block:14px calc(18px + env(safe-area-inset-bottom,0px));position:fixed;left:0;right:0;bottom:0;max-width:var(--maxw);margin:0 auto;z-index:10;background:linear-gradient(rgba(255,255,255,0),#fff 34%);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.cta{width:100%;border:none;border-radius:999px;background:linear-gradient(135deg,#22A06B 0%,var(--green) 55%,var(--green-d) 100%);color:#fff;font-weight:700;font-size:16.5px;padding:17px;cursor:pointer;transition:.15s;box-shadow:0 12px 26px -12px rgba(30,138,90,.75)}
+.cta{width:100%;border:none;border-radius:999px;background:var(--btn);color:var(--btn-ink);font-weight:700;font-size:16.5px;padding:17px;cursor:pointer;transition:.15s;box-shadow:0 12px 26px -12px rgba(156,118,52,.7),inset 0 1px 0 rgba(255,255,255,.45)}
 .cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
 .cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .back{display:block;margin:12px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline}
@@ -133,8 +133,8 @@ h1{font-family:var(--disp);font-weight:600;letter-spacing:-.02em;font-size:clamp
 .hero .sub{max-width:none;font-size:15px}
 .hero .sub b{color:var(--fg)}
 .hero .q{text-align:left;font-size:17px;font-weight:800;letter-spacing:0;margin:2px 0 0}
-.hero .opt{padding:14px 17px;color:#fff;border-color:transparent;background:linear-gradient(135deg,#22A06B 0%,var(--green) 55%,var(--green-d) 100%);box-shadow:0 10px 22px -12px rgba(30,138,90,.75)}
-.hero .opt .mk{border-color:rgba(255,255,255,.55);color:#fff}
+.hero .opt{padding:14px 17px;color:var(--btn-ink);border-color:transparent;background:var(--btn);box-shadow:0 10px 22px -12px rgba(156,118,52,.7),inset 0 1px 0 rgba(255,255,255,.45)}
+.hero .opt .mk{border-color:rgba(30,22,6,.35);color:var(--btn-ink)}
 .hero .opt:hover{filter:brightness(1.05)}
 .author{display:flex;align-items:center;gap:11px}
 .author img{width:50px;height:50px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--gold)}
@@ -170,8 +170,8 @@ var steps=[
   {type:"single",hero:{eyebrow:"Para dentistas",title:"Depender de indicação não vai te levar ao próximo nível.",
      sub:"<b>1 minuto</b> pra descobrir o que está travando a sua agenda.",
      ask:"Pra começar: hoje você investe em anúncios pra atrair pacientes?",
-     autor:{foto:"assets/thaylon.webp",nome:"Thaylon Vieira",papel:"Especialista em tráfego pra clínicas · eu analiso sua clínica"},
-     prova:{texto:"A Dra. Thays usa o método na clínica dela há mais de 4 anos.",quem:"Odontologia e HOF · Sapucaia do Sul/RS",inicial:"T"}},
+     autor:{foto:"assets/thaylon.webp",nome:"Thaylon Vieira",papel:"Especialista em tráfego pra clínicas odontológicas · eu analiso sua clínica"},
+     prova:{texto:"A Dra. Thays usa o método na clínica odontológica dela há mais de 4 anos.",quem:"Dentista · Sapucaia do Sul/RS",inicial:"T"}},
    q:"Hoje você investe em anúncios para atrair pacientes?",
    options:["Não, nunca investi","Já tentei, mas não deu retorno","Sim, invisto atualmente"]},
   {type:"name",title:"Antes de continuar, como posso te chamar?",sub:"Sua análise sai com o seu nome.",field:"Seu primeiro nome",cta:"Continuar →"},
